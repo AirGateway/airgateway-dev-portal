@@ -1,0 +1,24 @@
+{{ define "main" }}
+<div class="jumbotron" id="home-jumbotron">
+    <div class="container">
+        <h1 id="jumbo-title">Enabling the NDC age for travel agents</h1>
+        <p id="jumbo-cta">
+            <a class="btn btn-primary btn-lg" href="/apis" role="button">View our APIs »</a>
+        </p>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        {{ range where .Data.Pages.ByWeight "Type" "links" }}
+        <div class="col-md-4">
+            <h2>{{ .Title }}</h2>
+            <p>{{ .Description }}</p>
+            <p>
+                <a class="btn btn-default" href="{{ .Params.link }}" role="button">Read More</a>
+            </p>
+        </div>
+        {{ end }}
+    </div>
+</div> {{ "<!-- /.container -->" | safeHTML }}
+<hr>
+{{ end }}

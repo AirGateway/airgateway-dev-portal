@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="{{ .Lang }}">
+
+  <head>
+    {{ partial "head-meta.html" . }}
+
+    {{ block "schema-dot-org" . }}
+      <!-- schema.org metadata differs for Nodes and Pages -->
+    {{ end }}
+
+    <link rel="canonical" href="{{ .Permalink }}">
+
+    <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
+
+    {{ "<!-- combined, minified CSS -->" | safeHTML }}
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link href="{{ .Site.BaseURL }}css/all.css" rel="stylesheet"/>
+    {{ if .RSSLink }}
+    {{ "<!-- RSS 2.0 feed -->" | safeHTML }}
+    <link href="{{ .RSSLink }}" rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" />
+    {{ end }}
+
+    {{ template "_internal/google_analytics_async.html" . }}
+
+    {{ if .Site.Params.cookie_consent_info_url }}
+    {{ partial "cookie-consent.html" . }}
+    {{ end }}
+
+    {{ partial "head-custom.html" . }}
+  </head>
+
+  <body>
+    <nav class="nav fixed-top blog-nav">
+        <div class="container">
+          <a class="navbar-brand" href="#">AirGateway</a>
+
+          <div class="float-right dropdown">
+              <a href="#" class="nav-link dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Account
+              </a>
+              <div class= "dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+          </div>
+
+          <a class="nav-link {{ if .IsHome }}active{{ end }}" href="{{ .Site.BaseURL | absLangURL }}">{{ i18n "api_catalogue" }}</a>
+      </div>
+    </nav>
+
+    <div class="container-main">
+        {{ block "main" . }}
+        <!-- The part of the page that begins to differ between templates -->
+        {{ end }}
+    </div> {{ "<!-- /.container-main -->" | safeHTML }}
+
+
+
+    <div class="container">
+      <footer>
+        <p><a href="http://airgateway.net/">AirGateway</a> - The NDC Gateway</p>
+      </footer>
+    </div>
+
+  </body>
+
+</html>
+
+{{- /* vim: set ts=2 sw=2 et: */}}
