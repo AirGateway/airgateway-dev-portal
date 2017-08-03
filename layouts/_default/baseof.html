@@ -8,11 +8,13 @@
       <!-- schema.org metadata differs for Nodes and Pages -->
     {{ end }}
 
+    <link rel="icon" href="/images/favicon.png">
     <link rel="canonical" href="{{ .Permalink }}">
 
     <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
 
     {{ "<!-- combined, minified CSS -->" | safeHTML }}
+
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link href="{{ .Site.BaseURL }}css/all.css" rel="stylesheet"/>
@@ -33,21 +35,9 @@
   <body>
     <nav class="nav fixed-top blog-nav">
         <div class="container">
-          <a class="navbar-brand" href="#">AirGateway</a>
+          <a class="navbar-brand" href="{{ .Site.BaseURL | absLangURL }}">AirGateway</a>
 
-          <div class="float-right dropdown">
-              <a href="#" class="nav-link dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Account
-              </a>
-              <div class= "dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <a class="dropdown-item" href="#">Another action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
-              </div>
-          </div>
 
-          <a class="nav-link {{ if .IsHome }}active{{ end }}" href="{{ .Site.BaseURL | absLangURL }}">{{ i18n "api_catalogue" }}</a>
       </div>
     </nav>
 
@@ -65,8 +55,65 @@
       </footer>
     </div>
 
-  </body>
+    <script id="tpl_menu" type="text/html">
+        {{ $currentURL := .URL | absLangURL }}
+        {{ "<% if (localStorage.token) { %>" | safeHTML }}
+            <div class="float-right dropdown">
+                <a href="#" class="nav-link dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Account
+                </a>
+                <div class= "dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="/member/dashboard/">API Dashboard</a>
+                    <a class="dropdown-item" href="/member/profile/">Edit profile</a>
+                    <div class="dropdown-divider"></div>
+                    <a id="logout" class="dropdown-item" href="#">Log out</a>
+                </div>
+            </div>
+            {{ with .Site.GetPage "section" "apis" }}
+            {{ $permalinkURL := .URL | absLangURL }}
+            <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "api_catalogue" }}</a>
+            {{end}}
+        {{ "<% } else { %>" | safeHTML }}
+            {{ with .Site.GetPage "section" "register" }}
+            {{ $permalinkURL := .URL | absLangURL }}
+            <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "register" }}</a>
+            {{ end }}
+            {{ with .Site.GetPage "section" "login" }}
+            {{ $permalinkURL := .URL | absLangURL }}
+            <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "login" }}</a>
+            {{ end }}
+        {{ "<% } %>" | safeHTML }}
+    </script>
 
+    <script id="tpl_input" type="text/html">
+        <div class="form-group">
+            <label for="<%- name %>">{{ "<%- label %>" | safeHTML }}</label>
+            <input class="form-control"
+                   id="<%- name %>"
+                   name="<%- name %>"
+                   placeholder=""
+                   value="<%- value ? value : '' %>"
+                   autocomplete="off">
+        </div>
+    </script> {{ "<!-- /#tpl_input -->" | safeHTML }}
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js" integrity="sha256-obZACiHd7gkOk9iIL/pimWMTJ4W/pBsKu+oZnSeBIek=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js" integrity="sha256-8E6QUcFg1KTnpEU8TFGhpTGHw5fJqB9vCms3OhAYLqw=" crossorigin="anonymous"></script>
+    <script>
+        // the global _ will now be underscore
+        window.lodash = _.noConflict();
+
+        // the global _ will now be undefined
+        window.underscore = _.noConflict();
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js" integrity="sha256-F6h55Qw6sweK+t7SiOJX+2bpSAa3b/fnlrVCJvmEj1A=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ .Site.BaseURL }}js/all.js"></script>
+  </body>
 </html>
 
 {{- /* vim: set ts=2 sw=2 et: */}}
