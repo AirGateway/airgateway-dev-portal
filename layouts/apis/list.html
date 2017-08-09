@@ -12,16 +12,16 @@
         </div>
     </div> {{ "<!-- /.container -->" | safeHTML }}
 
-<script id="tpl_plan" type="text/html">
-    <div class="col-md-4">
-        <h2>{{ "<%- name %>" | safeHTML }}</h2>
-        <p></p>
-        <p>{{ "<%- short_description %>" | safeHTML }}</p>
-        <p></p>
-        <a href="/member/plan-request/<%- id %>" class="btn btn-success planRequest">
-            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; Request an API key
-        </a>
-    </div>
-</script>
+    <script id="tpl_plan" type="text/html">
+        <div class="col-md-4">
+            <h2>{{ "<%- name %>" | safeHTML }}</h2>
+            <p></p>
+            <p>{{ "<%- short_description %>" | safeHTML }}</p>
+            <p></p>
+            <a href="/member/plan-request/<%- id %>" class="btn btn-success planRequest">
+                <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; Request an API key
+            </a>
+        </div>
+    </script>
 {{ end }}
 

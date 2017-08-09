@@ -220,6 +220,7 @@ if ($planListingPage) {
     $.signedAjax({
         url: host + urlMap.plans,
         success: function (response) {
+            console.log(response);
             for (var i in response.data) {
                 $planContainer.append(tplPlan({
                     id: response.data[i].id,
