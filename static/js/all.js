@@ -14,14 +14,14 @@ $.signedAjax = function (data) {
 
     $.ajax(data);
 };
-var host = 'http://localhost:3002';
+var host = 'http://localhost:3001';
 var urlMap = {
     login: '/auth/login',
     signup: '/auth/signup',
     fields: '/auth/signup-fields',
     graph: '',
     profile: '/portal/profile',
-    apis: ''
+    plans: '/portal/plans'
 };
 var tplInput = underscore.template($('#tpl_input').html());
 var tplMenu = underscore.template($('#tpl_menu').html());
@@ -204,6 +204,28 @@ if ($profileForm.length) {
                         value:  response.data.fields[i]
                     }));
                 }
+            }
+        }
+    });
+}
+
+/******************/
+/*  PLAN LISTING  */
+/******************/
+$planListingPage = $('#plan-panel').length;
+$planContainer = $('.plan-container');
+if ($planListingPage) {
+    var tplPlan= underscore.template($('#tpl_plan').html());
+
+    $.signedAjax({
+        url: host + urlMap.plans,
+        success: function (response) {
+            for (var i in response.data) {
+                $planContainer.append(tplPlan({
+                    id: response.data[i].id,
+                    name: response.data[i].name,
+                    short_description: response.data[i].short_description,
+                }))
             }
         }
     });
