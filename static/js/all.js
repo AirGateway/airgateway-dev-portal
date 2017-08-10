@@ -21,10 +21,14 @@ var urlMap = {
     fields: '/auth/signup-fields',
     graph: '',
     profile: '/portal/profile',
-    plans: '/portal/plans'
+    plans: '/portal/plans',
+    requestKey: '/portal/request-key/',
+    requestFields: '/portal/request-key-fields'
 };
 var tplInput = underscore.template($('#tpl_input').html());
 var tplMenu = underscore.template($('#tpl_menu').html());
+var tplHiddenInput = underscore.template($('#tpl_hidden_input').html());
+
 //initialization
 $(function () {
     //1. render dynamic part of layout template
@@ -201,7 +205,7 @@ if ($profileForm.length) {
                     $submitBtn.before(tplInput({
                         name: name,
                         label: i,
-                        value:  response.data.fields[i]
+                        value: response.data.fields[i]
                     }));
                 }
             }
@@ -215,12 +219,21 @@ if ($profileForm.length) {
 $planListingPage = $('#plan-panel').length;
 $planContainer = $('.plan-container');
 if ($planListingPage) {
-    var tplPlan= underscore.template($('#tpl_plan').html());
+    var keyRequestFields = [];
+    var tplPlan = underscore.template($('#tpl_plan').html());
+
+    $.signedAjax({
+        url: host + urlMap.requestFields,
+        success: function (response) {
+            if (response.status === 'OK') {
+                keyRequestFields = response.fields;
+            }
+        }
+    });
 
     $.signedAjax({
         url: host + urlMap.plans,
         success: function (response) {
-            console.log(response);
             for (var i in response.data) {
                 $planContainer.append(tplPlan({
                     id: response.data[i].id,
@@ -232,6 +245,79 @@ if ($planListingPage) {
     });
 }
 
+$(document).on('click', '.planRequest', function (e) {
+    e.preventDefault();
+    $planForm = $('#plan-form');
+    $planForm.prepend(tplHiddenInput({
+        name: 'plan_id',
+        value: $(this).data('plan')
+    }));
+
+    if (keyRequestFields.length) {
+        for (var i in keyRequestFields) {
+            var name = lodash.snakeCase(keyRequestFields[i]);
+            if (!$planForm.find('[name="' + name + '"]').length) {
+                $planForm.prepend(tplInput({
+                    name: name,
+                    label: keyRequestFields[i],
+                    value: ''
+                }));
+                $planForm.find('[name="' + name + '"]').attr('required', true);
+            }
+        }
+
+        $('#plan-panel').removeClass('in');
+        $('#plan-form-panel').addClass('in');
+    } else {
+        $planForm.submit();
+    }
+});
+
+$(document).on('submit', '#plan-form', function (e) {
+    e.preventDefault();
+    $('#plan-panel').removeClass('in');
+    sendKeyRequest($(this));
+});
+
+function sendKeyRequest($form) {
+    var showErrorExistResult = function () {
+        $('.error-exist').addClass('in');
+    };
+    var showRequestKeyResult = function () {
+        $('.ok-requested').addClass('in');
+    };
+    var showApprovedKeyResult = function (token) {
+        $('.ok-approved').addClass('in');
+        $('.ok-approved-key').html(token);
+    };
+
+    $.signedAjax({
+        method: 'POST',
+        data: $form.serialize(),
+        url: host + urlMap.requestKey + $form.find('[name="plan_id"]').val(),
+        success: function (response) {
+            $('#plan-result').addClass('in');
+            $('#plan-form-panel').removeClass('in');
+
+            if (response.status === 'OK_APPROVED') {
+                showApprovedKeyResult(response.meta);
+            } else if (response.status === 'OK_REQUESTED') {
+                showRequestKeyResult();
+            }
+        },
+        error: function(response) {
+            $('#plan-result').addClass('in');
+            $('#plan-form-panel').removeClass('in');
+            if (response.responseJSON.status === 'ERROR_EXIST') {
+                showErrorExistResult();
+            }
+        }
+    });
+}
+
+
+//1. open page /apis/ - call /portal/request-key-fields
+//2.
 
 /******************/
 /* OTHER HANDLERS */
