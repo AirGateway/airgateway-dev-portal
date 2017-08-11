@@ -122,9 +122,8 @@ label.error {
     margin-top: 40px;
 }
 
-.btn.planRequest {
+.btn.planRequest, btn.invalidateKey {
     margin-top: 20px;
-    width: 100%;
 }
 
 #portal-footer {

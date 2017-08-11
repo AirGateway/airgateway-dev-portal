@@ -62,6 +62,13 @@
                     </div>
                 </div>
             </div>
+            <div class="ok-invalidated collapse">
+                <div class="panel panel-success">
+                    <div class="panel-body">
+                        <p>API Key successfully invalidated. Please refresh a page if you want to request key again.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -72,9 +79,16 @@
         <p></p>
         <p>{{ "<%- short_description %>" | safeHTML }}</p>
         <p></p>
-        <a href="/member/plan-request/<%- id %>" class="btn btn-success planRequest" data-plan="<%- id %>">
+        {{ "<% if (activated) { %>" | safeHTML }}
+        <a href="/member/invalidate-key/<%- id %>" class="btn btn-danger btn-block invalidateKey" data-plan="<%- id %>">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp; Invalidate an API key
+        </a>
+        {{ "<% } else { %>" | safeHTML }}
+        <a href="/member/plan-request/<%- id %>" class="btn btn-success btn-block planRequest" data-plan="<%- id %>">
             <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; Request an API key
         </a>
+        {{ "<% } %>" | safeHTML }}
+
     </div>
 </script>
 {{ end }}
