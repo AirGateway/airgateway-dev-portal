@@ -23,6 +23,7 @@ var urlMap = {
     profile: '/portal/profile',
     plans: '/portal/plans',
     requestKey: '/portal/request-key/',
+    invalidateKey: '/portal/invalidate-key/',
     requestFields: '/portal/request-key-fields'
 };
 var tplInput = underscore.template($('#tpl_input').html());
@@ -239,6 +240,7 @@ if ($planListingPage) {
                     id: response.data[i].id,
                     name: response.data[i].name,
                     short_description: response.data[i].short_description,
+                    activated: response.data[i].activated,
                 }))
             }
         }
@@ -271,6 +273,22 @@ $(document).on('click', '.planRequest', function (e) {
     } else {
         $planForm.submit();
     }
+});
+
+$(document).on('click', '.invalidateKey', function (e) {
+    e.preventDefault();
+
+    $.signedAjax({
+        method: 'POST',
+        url: host + urlMap.invalidateKey + $(this).data('plan'),
+        success: function (response) {
+            if (response.status === 'OK_INVALIDATED') {
+                $('#plan-result').addClass('in');
+                $('#plan-panel').removeClass('in');
+                $('.ok-invalidated').addClass('in');
+            }
+        },
+    });
 });
 
 $(document).on('submit', '#plan-form', function (e) {
