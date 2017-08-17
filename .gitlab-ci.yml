@@ -1,0 +1,12 @@
+stages:
+  - build
+
+before_script:
+  - sh scripts/ci-prepare.sh
+
+build_dashboard:
+  stage: build
+  script:
+    - sh scripts/ci-build.sh
+  only:
+    - master
