@@ -4,28 +4,40 @@
     This is your developer dashboard, here you can view the API usage and limits for your API keys over the last hours.
 </p>
 <p>
-
     You can enroll for access by visiting <a href="/apis/">the API Catalogue</a> page
-
 </p>
 
 <h2>Your API Subscriptions</h2>
 
+<div id="dashboard-panel" class="">
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">AirGateway NDC GTWY</h3>
-    </div>
-    <div class="panel-body">
-        <p> Our NDC Aggregation Gateway provides a unique entry-point to all our enabled airlines. </p>
+</div>
 
-        <div class="well">
-            <strong>Key Allowances:</strong>
-            <ul>
-                <li><strong>Rate limit:</strong> 1000 requests per 60 second</li>
-                <li><strong>Quota</strong>: 1000 requests renews every 3600 seconds</li>
-            </ul>
 
+<script id="tpl_dashboard_plan" type="text/html">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ "<%- name %>" | safeHTML }}</h3>
+        </div>
+        <div class="panel-body">
+            <p>{{ "<%- short_description %>" | safeHTML }}</p>
+
+            <div class="well">
+                <strong>Key Allowances:</strong>
+                <ul>
+                    <li><strong>Rate limit:</strong> {{ "<%- rate  %>" | safeHTML }} requests per {{ "<%- per %>" | safeHTML }} second</li>
+                    <li><strong>Quota</strong>: {{ "<%- quota_max %>" | safeHTML }} requests renews every {{ "<%- quota_renewal_rate %>" | safeHTML }} seconds</li>
+                </ul>
+            </div>
+
+            <div class="well">
+                <h4>API usage last hours: </h4>
+                <canvas id="<%- id %>" width="800" height="200"></canvas>
+                <h4>NDC Method breakdown: </h4>
+                <canvas id="<%- id %>-method-breakdown-canvas" width="800" height="200"></canvas>
+                <h4>NDC Method breakdown, percentage: </h4>
+                <canvas id="<%- id %>-method-breakdown-pie-canvas" width="800" height="300"></canvas>
+            </div>
         </div>
     </div>
-</div>
+</script> {{ "<!-- /#tpl_dashboard_plan -->" | safeHTML }}

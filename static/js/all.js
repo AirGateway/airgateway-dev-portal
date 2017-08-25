@@ -24,7 +24,9 @@ var urlMap = {
     plans: '/portal/plans',
     requestKey: '/portal/request-key/',
     invalidateKey: '/portal/invalidate-key/',
-    requestFields: '/portal/request-key-fields'
+    requestFields: '/portal/request-key-fields',
+    ndcStats: '/portal/stats/ndc/',
+    requestStats: '/portal/stats/me/',
 };
 var tplInput = underscore.template($('#tpl_input').html());
 var tplMenu = underscore.template($('#tpl_menu').html());
@@ -323,7 +325,7 @@ function sendKeyRequest($form) {
                 showRequestKeyResult();
             }
         },
-        error: function(response) {
+        error: function (response) {
             $('#plan-result').addClass('in');
             $('#plan-form-panel').removeClass('in');
             if (response.responseJSON.status === 'ERROR_EXIST') {
@@ -333,6 +335,37 @@ function sendKeyRequest($form) {
     });
 }
 
+
+$dashboardContainer = $('#dashboard-panel');
+
+if ($dashboardContainer.length) {
+    var tplDashboardPlan = underscore.template($('#tpl_dashboard_plan').html());
+
+    $.signedAjax({
+        url: host + urlMap.plans,
+        success: function (response) {
+            for (var i in response.data) {
+                if (response.data[i].activated) {
+                    $dashboardContainer.append(tplDashboardPlan({
+                        id: response.data[i].id,
+                        name: response.data[i].name,
+                        short_description: response.data[i].short_description,
+                        rate: response.data[i].rate,
+                        per: response.data[i].per,
+                        quota_max: response.data[i].quota_max,
+                        quota_renewal_rate: response.data[i].quota_renewal_rate,
+                    }));
+
+
+                    generateChartForKey(response.data[i].id, response.data[i].id, false);
+                    generateChartForKey(response.data[i].id, response.data[i].id + "-method-breakdown-canvas", true);
+                    generatePieChartForKey(response.data[i].id, response.data[i].id + "-method-breakdown-pie-canvas");
+                }
+            }
+        }
+    });
+
+}
 
 //1. open page /apis/ - call /portal/request-key-fields
 //2.
@@ -346,4 +379,307 @@ $(document).on('click', '#logout', function (e) {
     delete localStorage.token;
     location.href = '/';
 });
+
+
+function getColorFromBase(baseColor, transparency, number) {
+    var color = 'hsla(';
+
+    color += baseColor;
+    color += number + '%, ';
+
+    color += transparency;
+    color += ')';
+
+    return color;
+}
+
+function getDataSet(label, baseColor, number, highlightColor) {
+    var set = {
+        label: label,
+        fillColor: getColorFromBase(baseColor, '0.2', number),
+        strokeColor: getColorFromBase(baseColor, '1', number),
+        pointColor: getColorFromBase(baseColor, '1', number),
+        pointStrokeColor: highlightColor,
+        pointHighlightFill: highlightColor,
+        pointHighlightStroke: getColorFromBase(baseColor, '1', number),
+        data: []
+    };
+
+    return set;
+}
+
+function sortByKey(array, key) {
+    return array.sort(function (a, b) {
+        var x = a[key];
+        var y = b[key];
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
+}
+
+var chartOptions = {
+    ///Boolean - Whether grid lines are shown across the chart
+    scaleShowGridLines: true,
+    //String - Colour of the grid lines
+    scaleGridLineColor: "rgba(0,0,0,.05)",
+    //Number - Width of the grid lines
+    scaleGridLineWidth: 1,
+    //Boolean - Whether to show horizontal lines (except X axis)
+    scaleShowHorizontalLines: true,
+    //Boolean - Whether to show vertical lines (except Y axis)
+    scaleShowVerticalLines: true,
+    //Boolean - Whether the line is curved between points
+    bezierCurve: true,
+    //Number - Tension of the bezier curve between points
+    bezierCurveTension: 0.4,
+    //Boolean - Whether to show a dot for each point
+    pointDot: true,
+    //Number - Radius of each point dot in pixels
+    pointDotRadius: 4,
+    //Number - Pixel width of point dot stroke
+    pointDotStrokeWidth: 1,
+    //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+    pointHitDetectionRadius: 20,
+    //Boolean - Whether to show a stroke for datasets
+    datasetStroke: true,
+    //Number - Pixel width of dataset stroke
+    datasetStrokeWidth: 2,
+    //Boolean - Whether to fill the dataset with a colour
+    datasetFill: true,
+    //String - A legend template
+    legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",
+    multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
+};
+
+var pieChartOptions = {
+    cutoutPercentage: 0,
+    rotation: 0
+};
+
+var typesOfRequests = [
+    'AirDocIssueRQ',
+    'AirShoppingRQ',
+    'BaggageAllowanceRQ',
+    'FlightPriceRQ',
+    'ItinReshopRQ',
+    'OrderCancelRQ',
+    'OrderCreateRQ',
+    'OrderRetrieveRQ',
+    'SeatAvailabilityRQ'
+];
+
+var generatePieChartForKey = function (keyId, canvasId) {
+    var now = new Date();
+    now.setDate(now.getDate() + 1);
+    var fixedNowMonth = now.getMonth() + 1;
+
+    var then = new Date();
+    then.setDate(then.getDate() - 7);
+    var fixedThenMonth = then.getMonth() + 1;
+
+    var url = urlMap.ndcStats + keyId;
+    $.signedAjax({
+        url: host + url,
+        success: function (data) {
+            //$.getJSON("/json-original.json", function(data) {
+            var baseColor = '217, 100%, '; //#00245D
+
+            //var jsonData = JSON.parse(data);
+            var jsonData = data;
+
+            var sortMe = [];
+            var airShoppingRQs = 0;
+            var flightPriceRQs = 0;
+            var seatAvailabilityRQs = 0;
+            var baggageAllowanceRQs = 0;
+            var itinReshopRQs = 0;
+            var orderCreateRQs = 0;
+            var orderCancelRQs = 0;
+            var orderRetrieveRQs = 0;
+
+            for (var i in jsonData.data) {
+                airShoppingRQs += jsonData.data[i].AirShoppingRQ || 0;
+                flightPriceRQs += jsonData.data[i].FlightPriceRQ || 0;
+                seatAvailabilityRQs += jsonData.data[i].SeatAvailabilityRQ || 0;
+                baggageAllowanceRQs += jsonData.data[i].BaggageAllowanceRQ || 0;
+                itinReshopRQs += jsonData.data[i].ItinReshopRQ || 0;
+                orderCreateRQs += jsonData.data[i].OrderCreateRQ || 0;
+                orderCancelRQs += jsonData.data[i].OrderCancelRQ || 0;
+                orderRetrieveRQs += jsonData.data[i].OrderRetrieveRQ || 0;
+            }
+
+            var pieData = [
+                {
+                    value: airShoppingRQs,
+                    color: getColorFromBase(baseColor, '1', '10'),
+                    highlightColor: getColorFromBase(baseColor, '1', '15'),
+                    label: "AirShopping"
+                },
+                {
+                    value: flightPriceRQs,
+                    color: getColorFromBase(baseColor, '1', '70'),
+                    highlightColor: getColorFromBase(baseColor, '1', '75'),
+                    label: "FlightPrice"
+                },
+                {
+                    value: seatAvailabilityRQs,
+                    color: getColorFromBase(baseColor, '1', '80'),
+                    highlightColor: getColorFromBase(baseColor, '1', '85'),
+                    label: "SeatAvailability"
+                },
+                {
+                    value: baggageAllowanceRQs,
+                    color: getColorFromBase(baseColor, '1', '40'),
+                    highlightColor: getColorFromBase(baseColor, '1', '45'),
+                    label: "BaggageAllowance"
+                },
+                {
+                    value: itinReshopRQs,
+                    color: getColorFromBase(baseColor, '1', '30'),
+                    highlightColor: getColorFromBase(baseColor, '1', '35'),
+                    label: "ItinReshop"
+                },
+                {
+                    value: orderCreateRQs,
+                    color: getColorFromBase(baseColor, '1', '50'),
+                    highlightColor: getColorFromBase(baseColor, '1', '55'),
+                    label: "OrderCreate"
+                },
+                {
+                    value: orderCancelRQs,
+                    color: getColorFromBase(baseColor, '1', '0'),
+                    highlightColor: getColorFromBase(baseColor, '1', '5'),
+                    label: "OrderCancel"
+                },
+                {
+                    value: orderRetrieveRQs,
+                    color: getColorFromBase(baseColor, '1', '5'),
+                    highlightColor: getColorFromBase(baseColor, '1', '8'),
+                    label: "OrderRetrieve"
+                }
+            ];
+
+            var ctx = $("#" + canvasId).get(0).getContext("2d");
+
+            var pieChart = new Chart(ctx).Doughnut(pieData);
+        }
+    })
+
+};
+
+
+var generateChartForKey = function (planID, canvasId, showRequests) {
+    var now = new Date();
+    now.setDate(now.getDate() + 1);
+    var fixedNowMonth = now.getMonth() + 1;
+
+    var then = new Date();
+    then.setDate(then.getDate() - 7);
+    var fixedThenMonth = then.getMonth() + 1;
+
+
+    var url = urlMap.ndcStats + planID;
+
+    if (showRequests) {
+        url = urlMap.requestStats + planID;
+    }
+
+    $.signedAjax({
+        url: host + url,
+        success: function (data) {
+            var highlightColor = "#fff";
+
+            var baseColor = '217, 100%, '; //#00245D
+
+            var cData = {
+                labels: [],
+                datasets: [
+                    getDataSet('Requests', baseColor, 47, highlightColor),
+                    getDataSet('Errors', baseColor, 30, highlightColor),
+                    getDataSet('AirShopping', baseColor, 10, highlightColor),
+                    getDataSet('FlightPrice', baseColor, 70, highlightColor),
+                    getDataSet('SeatAvailability', baseColor, 80, highlightColor),
+                    getDataSet('BaggageAllowance', baseColor, 40, highlightColor),
+                    getDataSet('ItinReshop', baseColor, 30, highlightColor),
+                    getDataSet('OrderCreate', baseColor, 50, highlightColor),
+                    getDataSet('OrderCancel', baseColor, 0, highlightColor),
+                    getDataSet('OrderRetrieve', baseColor, 5, highlightColor),
+
+                    getDataSet('Other', baseColor, 90, highlightColor)
+                ]
+            };
+
+            //var jsonData = JSON.parse(data);
+            var jsonData = data;
+
+            var sortMe = [];
+            for (var i in jsonData.data) {
+                var thisDate = new Date(jsonData.data[i].id.year, jsonData.data[i].id.month, jsonData.data[i].id.day, jsonData.data[i].id.hour);
+                var l = jsonData.data[i].id.hour + ':00';
+                var hits = jsonData.data[i].hits;
+                var errors = jsonData.data[i].error;
+
+                var obj = {
+                    d: thisDate,
+                    label: l,
+                    hits: hits,
+                    errors: errors
+                };
+
+                if (showRequests) {
+                    var airShoppingRQs = jsonData.data[i].AirShoppingRQ || 0;
+                    var flightPriceRQs = jsonData.data[i].FlightPriceRQ || 0;
+                    var seatAvailabilityRQs = jsonData.data[i].SeatAvailabilityRQ || 0;
+                    var baggageAllowanceRQs = jsonData.data[i].BaggageAllowanceRQ || 0;
+                    var itinReshopRQs = jsonData.data[i].ItinReshopRQ || 0;
+                    var orderCreateRQs = jsonData.data[i].OrderCreateRQ || 0;
+                    var orderCancelRQs = jsonData.data[i].OrderCancelRQ || 0;
+                    var orderRetrieveRQs = jsonData.data[i].OrderRetrieveRQ || 0;
+
+                    var obj = {
+                        d: thisDate,
+                        label: l,
+                        hits: hits,
+                        errors: errors,
+                        airShoppingRQs: airShoppingRQs,
+                        flightPriceRQs: flightPriceRQs,
+                        seatAvailabilityRQs: seatAvailabilityRQs,
+                        baggageAllowanceRQs: baggageAllowanceRQs,
+                        itinReshopRQs: itinReshopRQs,
+                        orderCreateRQs: orderCreateRQs,
+                        orderCancelRQs: orderCancelRQs,
+                        orderRetrieveRQs: orderRetrieveRQs
+                    }
+                }
+
+                sortMe.push(obj)
+            }
+
+            fixedData = sortByKey(sortMe, "d");
+
+            if (showRequests) {
+                for (var i in fixedData) {
+                    cData.labels.push(fixedData[i].label);
+                    cData.datasets[2].data.push(fixedData[i].airShoppingRQs);
+                    cData.datasets[3].data.push(fixedData[i].flightPriceRQs);
+                    cData.datasets[4].data.push(fixedData[i].seatAvailabilityRQs);
+                    cData.datasets[5].data.push(fixedData[i].baggageAllowanceRQs);
+                    cData.datasets[6].data.push(fixedData[i].itinReshopRQs);
+                    cData.datasets[7].data.push(fixedData[i].orderCreateRQs);
+                    cData.datasets[8].data.push(fixedData[i].orderCancelRQs);
+                    cData.datasets[9].data.push(fixedData[i].orderRetrieveRQs)
+                }
+            } else {
+                for (var i in fixedData) {
+                    cData.labels.push(fixedData[i].label);
+                    cData.datasets[0].data.push(fixedData[i].hits);
+                    cData.datasets[1].data.push(fixedData[i].errors)
+                }
+            }
+
+            var ctx = $("#" + canvasId).get(0).getContext("2d");
+            var myNewChart = new Chart(ctx).Line(cData, chartOptions);
+        }
+    });
+};
+
 
