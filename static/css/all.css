@@ -48,10 +48,10 @@ label.error {
 
 .navbar-brand {
     color: white;
-    background: url("/images/airgateway-logo.png") no-repeat top left;
+    /*background: url("/images/airgateway-logo.png") no-repeat top left;*/
     background-size: 44px;
     background-position-y: 0px;
-    padding: 10px 10px 10px 50px;
+    padding: 10px 10px 10px 10px;
     font-weight: bold;
     text-transform: uppercase;
     float: none;
