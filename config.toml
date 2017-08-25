@@ -1,4 +1,4 @@
 baseURL = "https://portal.airgtwy.com/"
 languageCode = "en-us"
-title = "1My New Hugo Site1"
+title = "Airline Developer Portal"
 theme = "bootstrap4"
