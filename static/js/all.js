@@ -357,8 +357,8 @@ if ($dashboardContainer.length) {
                     }));
 
 
-                    generateChartForKey(response.data[i].id, response.data[i].id, false);
-                    generateChartForKey(response.data[i].id, response.data[i].id + "-method-breakdown-canvas", true);
+                    generateChartForKey(response.data[i].id, response.data[i].id, true);
+                    generateChartForKey(response.data[i].id, response.data[i].id + "-method-breakdown-canvas", false);
                     generatePieChartForKey(response.data[i].id, response.data[i].id + "-method-breakdown-pie-canvas");
                 }
             }
@@ -467,6 +467,123 @@ var typesOfRequests = [
     'SeatAvailabilityRQ'
 ];
 
+
+
+var generateChartForKey = function (planID, canvasId, showRequests) {
+    var now = new Date();
+    now.setDate(now.getDate() + 1);
+    var fixedNowMonth = now.getMonth() + 1;
+
+    var then = new Date();
+    then.setDate(then.getDate() - 7);
+    var fixedThenMonth = then.getMonth() + 1;
+
+
+    var url = urlMap.ndcStats + planID;
+
+    if (showRequests) {
+        url = urlMap.requestStats + planID;
+    }
+
+    $.signedAjax({
+        url: host + url,
+        success: function (data) {
+            var highlightColor = "#fff";
+
+            var baseColor = '217, 100%, '; //#00245D
+
+            var cData = {
+                labels: [],
+                datasets: [
+                    getDataSet('Requests', baseColor, 47, highlightColor),
+                    getDataSet('Errors', baseColor, 30, highlightColor),
+                    getDataSet('AirShopping', baseColor, 10, highlightColor),
+                    getDataSet('FlightPrice', baseColor, 70, highlightColor),
+                    getDataSet('SeatAvailability', baseColor, 80, highlightColor),
+                    getDataSet('BaggageAllowance', baseColor, 40, highlightColor),
+                    getDataSet('ItinReshop', baseColor, 30, highlightColor),
+                    getDataSet('OrderCreate', baseColor, 50, highlightColor),
+                    getDataSet('OrderCancel', baseColor, 0, highlightColor),
+                    getDataSet('OrderRetrieve', baseColor, 5, highlightColor),
+
+                    getDataSet('Other', baseColor, 90, highlightColor)
+                ]
+            };
+
+            //var jsonData = JSON.parse(data);
+            var jsonData = data;
+
+            var sortMe = [];
+            for (var i in jsonData.data) {
+                var thisDate = new Date(jsonData.data[i].id.year, jsonData.data[i].id.month, jsonData.data[i].id.day, jsonData.data[i].id.hour);
+                var l = jsonData.data[i].id.hour + ':00';
+                var hits = jsonData.data[i].hits;
+                var errors = jsonData.data[i].error;
+
+                var obj = {
+                    d: thisDate,
+                    label: l,
+                    hits: hits,
+                    errors: errors
+                };
+
+                if (!showRequests) {
+                    var airShoppingRQs = jsonData.data[i].AirShoppingRQ || 0;
+                    var flightPriceRQs = jsonData.data[i].FlightPriceRQ || 0;
+                    var seatAvailabilityRQs = jsonData.data[i].SeatAvailabilityRQ || 0;
+                    var baggageAllowanceRQs = jsonData.data[i].BaggageAllowanceRQ || 0;
+                    var itinReshopRQs = jsonData.data[i].ItinReshopRQ || 0;
+                    var orderCreateRQs = jsonData.data[i].OrderCreateRQ || 0;
+                    var orderCancelRQs = jsonData.data[i].OrderCancelRQ || 0;
+                    var orderRetrieveRQs = jsonData.data[i].OrderRetrieveRQ || 0;
+
+                    var obj = {
+                        d: thisDate,
+                        label: l,
+                        hits: hits,
+                        errors: errors,
+                        airShoppingRQs: airShoppingRQs,
+                        flightPriceRQs: flightPriceRQs,
+                        seatAvailabilityRQs: seatAvailabilityRQs,
+                        baggageAllowanceRQs: baggageAllowanceRQs,
+                        itinReshopRQs: itinReshopRQs,
+                        orderCreateRQs: orderCreateRQs,
+                        orderCancelRQs: orderCancelRQs,
+                        orderRetrieveRQs: orderRetrieveRQs
+                    }
+                }
+
+                sortMe.push(obj)
+            }
+
+            fixedData = sortByKey(sortMe, "d");
+
+            if (!showRequests) {
+                for (var i in fixedData) {
+                    cData.labels.push(fixedData[i].label);
+                    cData.datasets[2].data.push(fixedData[i].airShoppingRQs);
+                    cData.datasets[3].data.push(fixedData[i].flightPriceRQs);
+                    cData.datasets[4].data.push(fixedData[i].seatAvailabilityRQs);
+                    cData.datasets[5].data.push(fixedData[i].baggageAllowanceRQs);
+                    cData.datasets[6].data.push(fixedData[i].itinReshopRQs);
+                    cData.datasets[7].data.push(fixedData[i].orderCreateRQs);
+                    cData.datasets[8].data.push(fixedData[i].orderCancelRQs);
+                    cData.datasets[9].data.push(fixedData[i].orderRetrieveRQs)
+                }
+            } else {
+                for (var i in fixedData) {
+                    cData.labels.push(fixedData[i].label);
+                    cData.datasets[0].data.push(fixedData[i].hits);
+                    cData.datasets[1].data.push(fixedData[i].errors)
+                }
+            }
+
+            var ctx = $("#" + canvasId).get(0).getContext("2d");
+            var myNewChart = new Chart(ctx).Line(cData, chartOptions);
+        }
+    });
+};
+
 var generatePieChartForKey = function (keyId, canvasId) {
     var now = new Date();
     now.setDate(now.getDate() + 1);
@@ -566,120 +683,5 @@ var generatePieChartForKey = function (keyId, canvasId) {
 
 };
 
-
-var generateChartForKey = function (planID, canvasId, showRequests) {
-    var now = new Date();
-    now.setDate(now.getDate() + 1);
-    var fixedNowMonth = now.getMonth() + 1;
-
-    var then = new Date();
-    then.setDate(then.getDate() - 7);
-    var fixedThenMonth = then.getMonth() + 1;
-
-
-    var url = urlMap.ndcStats + planID;
-
-    if (showRequests) {
-        url = urlMap.requestStats + planID;
-    }
-
-    $.signedAjax({
-        url: host + url,
-        success: function (data) {
-            var highlightColor = "#fff";
-
-            var baseColor = '217, 100%, '; //#00245D
-
-            var cData = {
-                labels: [],
-                datasets: [
-                    getDataSet('Requests', baseColor, 47, highlightColor),
-                    getDataSet('Errors', baseColor, 30, highlightColor),
-                    getDataSet('AirShopping', baseColor, 10, highlightColor),
-                    getDataSet('FlightPrice', baseColor, 70, highlightColor),
-                    getDataSet('SeatAvailability', baseColor, 80, highlightColor),
-                    getDataSet('BaggageAllowance', baseColor, 40, highlightColor),
-                    getDataSet('ItinReshop', baseColor, 30, highlightColor),
-                    getDataSet('OrderCreate', baseColor, 50, highlightColor),
-                    getDataSet('OrderCancel', baseColor, 0, highlightColor),
-                    getDataSet('OrderRetrieve', baseColor, 5, highlightColor),
-
-                    getDataSet('Other', baseColor, 90, highlightColor)
-                ]
-            };
-
-            //var jsonData = JSON.parse(data);
-            var jsonData = data;
-
-            var sortMe = [];
-            for (var i in jsonData.data) {
-                var thisDate = new Date(jsonData.data[i].id.year, jsonData.data[i].id.month, jsonData.data[i].id.day, jsonData.data[i].id.hour);
-                var l = jsonData.data[i].id.hour + ':00';
-                var hits = jsonData.data[i].hits;
-                var errors = jsonData.data[i].error;
-
-                var obj = {
-                    d: thisDate,
-                    label: l,
-                    hits: hits,
-                    errors: errors
-                };
-
-                if (showRequests) {
-                    var airShoppingRQs = jsonData.data[i].AirShoppingRQ || 0;
-                    var flightPriceRQs = jsonData.data[i].FlightPriceRQ || 0;
-                    var seatAvailabilityRQs = jsonData.data[i].SeatAvailabilityRQ || 0;
-                    var baggageAllowanceRQs = jsonData.data[i].BaggageAllowanceRQ || 0;
-                    var itinReshopRQs = jsonData.data[i].ItinReshopRQ || 0;
-                    var orderCreateRQs = jsonData.data[i].OrderCreateRQ || 0;
-                    var orderCancelRQs = jsonData.data[i].OrderCancelRQ || 0;
-                    var orderRetrieveRQs = jsonData.data[i].OrderRetrieveRQ || 0;
-
-                    var obj = {
-                        d: thisDate,
-                        label: l,
-                        hits: hits,
-                        errors: errors,
-                        airShoppingRQs: airShoppingRQs,
-                        flightPriceRQs: flightPriceRQs,
-                        seatAvailabilityRQs: seatAvailabilityRQs,
-                        baggageAllowanceRQs: baggageAllowanceRQs,
-                        itinReshopRQs: itinReshopRQs,
-                        orderCreateRQs: orderCreateRQs,
-                        orderCancelRQs: orderCancelRQs,
-                        orderRetrieveRQs: orderRetrieveRQs
-                    }
-                }
-
-                sortMe.push(obj)
-            }
-
-            fixedData = sortByKey(sortMe, "d");
-
-            if (showRequests) {
-                for (var i in fixedData) {
-                    cData.labels.push(fixedData[i].label);
-                    cData.datasets[2].data.push(fixedData[i].airShoppingRQs);
-                    cData.datasets[3].data.push(fixedData[i].flightPriceRQs);
-                    cData.datasets[4].data.push(fixedData[i].seatAvailabilityRQs);
-                    cData.datasets[5].data.push(fixedData[i].baggageAllowanceRQs);
-                    cData.datasets[6].data.push(fixedData[i].itinReshopRQs);
-                    cData.datasets[7].data.push(fixedData[i].orderCreateRQs);
-                    cData.datasets[8].data.push(fixedData[i].orderCancelRQs);
-                    cData.datasets[9].data.push(fixedData[i].orderRetrieveRQs)
-                }
-            } else {
-                for (var i in fixedData) {
-                    cData.labels.push(fixedData[i].label);
-                    cData.datasets[0].data.push(fixedData[i].hits);
-                    cData.datasets[1].data.push(fixedData[i].errors)
-                }
-            }
-
-            var ctx = $("#" + canvasId).get(0).getContext("2d");
-            var myNewChart = new Chart(ctx).Line(cData, chartOptions);
-        }
-    });
-};
 
 
