@@ -13,6 +13,9 @@
 - id: login
   translation: "Log in"
 
+- id: ndc_validator
+  translation: "NDC Validator"
+
 - id: readMore
   translation: "Read more →"
 

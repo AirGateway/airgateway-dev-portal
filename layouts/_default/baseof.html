@@ -84,6 +84,11 @@
             <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "login" }}</a>
             {{ end }}
         {{ "<% } %>" | safeHTML }}
+        {{ with .Site.GetPage "section" "validator" }}
+        {{ $permalinkURL := .URL | absLangURL }}
+        <a class="nav-link {{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "ndc_validator" }}</a>
+        {{ end}}
+
     </script>
 
     <script id="tpl_input" type="text/html">

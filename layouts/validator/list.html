@@ -1,0 +1,19 @@
+{{ define "main" }}
+<div id="validator-panel" class="container">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <h1>{{ .Title }}</h1>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <a href="{{ .Params.link }}" target="_blank">
+                        NDC Validator
+                    </a>
+                    <p>{{ .Description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> {{ "<!-- /.container -->" | safeHTML }}
+{{ end }}
