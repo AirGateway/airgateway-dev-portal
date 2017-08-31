@@ -14,7 +14,7 @@ $.signedAjax = function (data) {
 
     $.ajax(data);
 };
-var host = location.host.indexOf('portal.airgtwy.com') == -1 ? 'http://localhost:3001' : 'https://cloud.airgtwy.com/api/';
+var host = location.host.indexOf('localhost') == -1 ?  'https://cloud.airgtwy.com/api/' :'http://localhost:3001';
 var urlMap = {
     login: '/auth/login',
     signup: '/auth/signup',
