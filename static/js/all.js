@@ -624,60 +624,73 @@ var generatePieChartForKey = function (keyId, canvasId) {
                 orderRetrieveRQs += jsonData.data[i].OrderRetrieveRQ || 0;
             }
 
-            var pieData = [
-                {
-                    value: airShoppingRQs,
-                    color: getColorFromBase(baseColor, '1', '10'),
-                    highlightColor: getColorFromBase(baseColor, '1', '15'),
-                    label: "AirShopping"
-                },
-                {
-                    value: flightPriceRQs,
-                    color: getColorFromBase(baseColor, '1', '70'),
-                    highlightColor: getColorFromBase(baseColor, '1', '75'),
-                    label: "FlightPrice"
-                },
-                {
-                    value: seatAvailabilityRQs,
-                    color: getColorFromBase(baseColor, '1', '80'),
-                    highlightColor: getColorFromBase(baseColor, '1', '85'),
-                    label: "SeatAvailability"
-                },
-                {
-                    value: baggageAllowanceRQs,
-                    color: getColorFromBase(baseColor, '1', '40'),
-                    highlightColor: getColorFromBase(baseColor, '1', '45'),
-                    label: "BaggageAllowance"
-                },
-                {
-                    value: itinReshopRQs,
-                    color: getColorFromBase(baseColor, '1', '30'),
-                    highlightColor: getColorFromBase(baseColor, '1', '35'),
-                    label: "ItinReshop"
-                },
-                {
-                    value: orderCreateRQs,
-                    color: getColorFromBase(baseColor, '1', '50'),
-                    highlightColor: getColorFromBase(baseColor, '1', '55'),
-                    label: "OrderCreate"
-                },
-                {
-                    value: orderCancelRQs,
-                    color: getColorFromBase(baseColor, '1', '0'),
-                    highlightColor: getColorFromBase(baseColor, '1', '5'),
-                    label: "OrderCancel"
-                },
-                {
-                    value: orderRetrieveRQs,
-                    color: getColorFromBase(baseColor, '1', '5'),
-                    highlightColor: getColorFromBase(baseColor, '1', '8'),
-                    label: "OrderRetrieve"
-                }
-            ];
+            var noData = false;
 
-            var ctx = $("#" + canvasId).get(0).getContext("2d");
+            if (airShoppingRQs == 0 && flightPriceRQs == 0 && seatAvailabilityRQs == 0 && baggageAllowanceRQs == 0 && itinReshopRQs == 0 && orderCreateRQs == 0 && orderCancelRQs == 0 && orderRetrieveRQs == 0){
+                noData = true;
+            }
 
-            var pieChart = new Chart(ctx).Doughnut(pieData);
+            if (noData){
+                var ctx = canvas.nativeElement.getContext('2d');
+                ctx.font = "20px Lato";
+                ctx.textAlign="center";
+                ctx.fillText("No Available Data", 400, 100);
+            }
+            else{
+                var pieData = [
+                    {
+                        value: airShoppingRQs,
+                        color: getColorFromBase(baseColor, '1', '10'),
+                        highlightColor: getColorFromBase(baseColor, '1', '15'),
+                        label: "AirShopping"
+                    },
+                    {
+                        value: flightPriceRQs,
+                        color: getColorFromBase(baseColor, '1', '70'),
+                        highlightColor: getColorFromBase(baseColor, '1', '75'),
+                        label: "FlightPrice"
+                    },
+                    {
+                        value: seatAvailabilityRQs,
+                        color: getColorFromBase(baseColor, '1', '80'),
+                        highlightColor: getColorFromBase(baseColor, '1', '85'),
+                        label: "SeatAvailability"
+                    },
+                    {
+                        value: baggageAllowanceRQs,
+                        color: getColorFromBase(baseColor, '1', '40'),
+                        highlightColor: getColorFromBase(baseColor, '1', '45'),
+                        label: "BaggageAllowance"
+                    },
+                    {
+                        value: itinReshopRQs,
+                        color: getColorFromBase(baseColor, '1', '30'),
+                        highlightColor: getColorFromBase(baseColor, '1', '35'),
+                        label: "ItinReshop"
+                    },
+                    {
+                        value: orderCreateRQs,
+                        color: getColorFromBase(baseColor, '1', '50'),
+                        highlightColor: getColorFromBase(baseColor, '1', '55'),
+                        label: "OrderCreate"
+                    },
+                    {
+                        value: orderCancelRQs,
+                        color: getColorFromBase(baseColor, '1', '0'),
+                        highlightColor: getColorFromBase(baseColor, '1', '5'),
+                        label: "OrderCancel"
+                    },
+                    {
+                        value: orderRetrieveRQs,
+                        color: getColorFromBase(baseColor, '1', '5'),
+                        highlightColor: getColorFromBase(baseColor, '1', '8'),
+                        label: "OrderRetrieve"
+                    }
+                ];
+
+                var ctx = $("#" + canvasId).get(0).getContext("2d");
+                var pieChart = new Chart(ctx).Doughnut(pieData);
+            }
         }
     })
 
