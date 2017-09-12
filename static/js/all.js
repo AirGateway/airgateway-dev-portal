@@ -631,7 +631,7 @@ var generatePieChartForKey = function (keyId, canvasId) {
             }
 
             if (noData){
-                var ctx = canvas.nativeElement.getContext('2d');
+                var ctx =  $("#" + canvasId).get(0).getContext("2d");
                 ctx.font = "20px Lato";
                 ctx.textAlign="center";
                 ctx.fillText("No Available Data", 400, 100);
