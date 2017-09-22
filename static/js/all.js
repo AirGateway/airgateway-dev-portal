@@ -14,7 +14,7 @@ $.signedAjax = function (data) {
 
     $.ajax(data);
 };
-var host = location.host.indexOf('localhost') == -1 ?  'https://cloud.airgtwy.com/api/' :'http://localhost:3001';
+var host = location.host.indexOf('localhost') == -1 ? 'https://cloud.airgtwy.com/api/' : 'http://localhost:3001';
 var urlMap = {
     login: '/auth/login',
     signup: '/auth/signup',
@@ -184,10 +184,16 @@ $profileForm.submit(function (e) {
             data: data,
             url: host + urlMap.profile,
             success: function (response) {
+                console.log(2);
                 if (response.status === 'error') {
                     showFormErrors(response.error);
                 } else {
                     showFormSuccess();
+                }
+            },
+            error: function (result) {
+                if (result.status == 401) {
+                    $('#logout').click();
                 }
             }
         });
@@ -212,6 +218,11 @@ if ($profileForm.length) {
                     }));
                 }
             }
+        },
+        error: function (result) {
+            if (result.status == 401) {
+                $('#logout').click();
+            }
         }
     });
 }
@@ -231,6 +242,11 @@ if ($planListingPage) {
             if (response.status === 'OK') {
                 keyRequestFields = response.fields;
             }
+        },
+        error: function (result) {
+            if (result.status == 401) {
+                $('#logout').click();
+            }
         }
     });
 
@@ -244,6 +260,11 @@ if ($planListingPage) {
                     short_description: response.data[i].short_description,
                     activated: response.data[i].activated,
                 }))
+            }
+        },
+        error: function (result) {
+            if (result.status == 401) {
+                $('#logout').click();
             }
         }
     });
@@ -290,6 +311,11 @@ $(document).on('click', '.invalidateKey', function (e) {
                 $('.ok-invalidated').addClass('in');
             }
         },
+        error: function (result) {
+            if (result.status == 401) {
+                $('#logout').click();
+            }
+        }
     });
 });
 
@@ -361,6 +387,11 @@ if ($dashboardContainer.length) {
                     generateChartForKey(response.data[i].id, response.data[i].id + "-method-breakdown-canvas", false);
                     generatePieChartForKey(response.data[i].id, response.data[i].id + "-method-breakdown-pie-canvas");
                 }
+            }
+        },
+        error: function (result) {
+            if (result.status == 401) {
+                $('#logout').click();
             }
         }
     });
@@ -466,7 +497,6 @@ var typesOfRequests = [
     'OrderRetrieveRQ',
     'SeatAvailabilityRQ'
 ];
-
 
 
 var generateChartForKey = function (planID, canvasId, showRequests) {
@@ -580,6 +610,11 @@ var generateChartForKey = function (planID, canvasId, showRequests) {
 
             var ctx = $("#" + canvasId).get(0).getContext("2d");
             var myNewChart = new Chart(ctx).Line(cData, chartOptions);
+        },
+        error: function (result) {
+            if (result.status == 401) {
+                $('#logout').click();
+            }
         }
     });
 };
@@ -626,17 +661,17 @@ var generatePieChartForKey = function (keyId, canvasId) {
 
             var noData = false;
 
-            if (airShoppingRQs == 0 && flightPriceRQs == 0 && seatAvailabilityRQs == 0 && baggageAllowanceRQs == 0 && itinReshopRQs == 0 && orderCreateRQs == 0 && orderCancelRQs == 0 && orderRetrieveRQs == 0){
+            if (airShoppingRQs == 0 && flightPriceRQs == 0 && seatAvailabilityRQs == 0 && baggageAllowanceRQs == 0 && itinReshopRQs == 0 && orderCreateRQs == 0 && orderCancelRQs == 0 && orderRetrieveRQs == 0) {
                 noData = true;
             }
 
-            if (noData){
-                var ctx =  $("#" + canvasId).get(0).getContext("2d");
+            if (noData) {
+                var ctx = $("#" + canvasId).get(0).getContext("2d");
                 ctx.font = "20px Lato";
-                ctx.textAlign="center";
+                ctx.textAlign = "center";
                 ctx.fillText("No Available Data", 400, 100);
             }
-            else{
+            else {
                 var pieData = [
                     {
                         value: airShoppingRQs,
@@ -690,6 +725,11 @@ var generatePieChartForKey = function (keyId, canvasId) {
 
                 var ctx = $("#" + canvasId).get(0).getContext("2d");
                 var pieChart = new Chart(ctx).Doughnut(pieData);
+            }
+        },
+        error: function (result) {
+            if (result.status == 401) {
+                $('#logout').click();
             }
         }
     })
