@@ -93,7 +93,7 @@ $registerForm.submit(function (e) {
             data: data,
             url: host + urlMap.signup,
             success: function (response) {
-                if (response.status === 'error') {
+                if (response.status === 'ERROR') {
                     showFormErrors(response.error);
                 } else {
                     localStorage.token = response.meta;
@@ -149,7 +149,7 @@ $loginForm.submit(function (e) {
             data: data,
             url: host + urlMap.login,
             success: function (response) {
-                if (response.status === 'error') {
+                if (response.status === 'ERROR') {
                     showFormErrors(response.error);
                 } else {
                     localStorage.token = response.meta;
@@ -184,8 +184,7 @@ $profileForm.submit(function (e) {
             data: data,
             url: host + urlMap.profile,
             success: function (response) {
-                console.log(2);
-                if (response.status === 'error') {
+                if (response.status === 'ERROR') {
                     showFormErrors(response.error);
                 } else {
                     showFormSuccess();
