@@ -544,8 +544,8 @@ var generateChartForKey = function (planID, canvasId, showRequests) {
 
             var sortMe = [];
             for (var i in jsonData.data) {
-                var thisDate = new Date(jsonData.data[i].id.year, jsonData.data[i].id.month, jsonData.data[i].id.day, jsonData.data[i].id.hour);
-                var l = jsonData.data[i].id.hour + ':00';
+                var thisDate = new Date(jsonData.data[i].id.time);
+                var l = thisDate.getHours() + ':00';
                 var hits = jsonData.data[i].hits;
                 var errors = jsonData.data[i].error;
 
