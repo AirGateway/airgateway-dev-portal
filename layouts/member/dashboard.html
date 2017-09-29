@@ -37,10 +37,22 @@
                 <canvas id="<%- id %>-method-breakdown-canvas" width="800" height="200"></canvas>
                 <h4>NDC Method breakdown, percentage: </h4>
                 <canvas id="<%- id %>-method-breakdown-pie-canvas" width="800" height="300"></canvas>
+
                 <h4>Aggregator participants: </h4>
-                <canvas id="<%- id %>-aggregator" width="800" height="300"></canvas>
+                <div class="form-inline">
+                    <select class="form-control <%- id %>-aggregatorSelect" onchange="reloadAggregatorChart('<%- id %>',this.value)">
+                        <option value="">All aggregators</option>
+                    </select>
+                </div>
+                <canvas id="<%- id %>-aggregator" width="800" height="200"></canvas>
+
                 <h4>Agency participants: </h4>
-                <canvas id="<%- id %>-agency" width="800" height="300"></canvas>
+                <div class="form-inline">
+                    <select class="form-control <%- id %>-agencySelect" onchange="reloadAgencyChart('<%- id %>',this.value)">
+                        <option value="">All agencies</option>
+                    </select>
+                </div>
+                <canvas id="<%- id %>-agency" width="800" height="200"></canvas>
             </div>
         </div>
     </div>

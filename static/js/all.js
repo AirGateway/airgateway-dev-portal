@@ -773,10 +773,22 @@ var generateChartForParticipants = function (keyId, canvasId, isAggregator) {
 
             var baseColor = '217, 100%, '; //#00245D
 
-            var cData = {
-                labels: [],
-                datasets: []
-            };
+            var cData;
+            if (isAggregator) {
+                chartDataAggregator[keyId] = {
+                    labels: [],
+                    datasets: []
+                };
+
+                cData = chartDataAggregator[keyId]
+            } else {
+                chartDataAgency[keyId] = {
+                    labels: [],
+                    datasets: []
+                };
+                cData = chartDataAgency[keyId]
+            }
+
             var i = 0;
             var elements = [];
             for (var name in response.data[0].items) {
@@ -787,7 +799,11 @@ var generateChartForParticipants = function (keyId, canvasId, isAggregator) {
                 cData.datasets.push(getDataSet(name, baseColor, colors[i], highlightColor));
                 i++;
             }
-
+            if (isAggregator) {
+                aggregatorElements[keyId] = elements;
+            } else {
+                agencyElements[keyId] = elements;
+            }
             //var jsonData = JSON.parse(data);
             var jsonData = response;
 
@@ -832,9 +848,59 @@ var generateChartForParticipants = function (keyId, canvasId, isAggregator) {
                 var ctx = $("#" + canvasId).get(0).getContext("2d");
                 var myNewChart = new Chart(ctx).Line(cData, chartOptions);
             }
+
+            reloadSelects(keyId, isAggregator);
         }
     });
 };
+
+var chartDataAggregator = [];
+var chartDataAgency = [];
+var aggregatorElements = [];
+var agencyElements = [];
+
+function reloadSelects(keyId, isAggregator) {
+    var select = $('.' + keyId + (isAggregator ? '-aggregatorSelect' : '-agencySelect'));
+    elements = isAggregator ?  aggregatorElements[keyId] : agencyElements[keyId];
+    for (var i in elements) {
+        select.append('<option value="'+elements[i]+'">'+elements[i]+'</option>')
+    }
+
+}
+
+function reloadAggregatorChart(keyId, value) {
+    var data = JSON.parse(JSON.stringify(chartDataAggregator[keyId]));
+    if (value) {
+        var newDatasets = [];
+        for(var i in data.datasets) {
+            if (data.datasets[i].label == value) {
+                newDatasets = [data.datasets[i]];
+                break;
+            }
+        }
+        data.datasets = newDatasets;
+    }
+
+    var ctx = $("#" + keyId + '-aggregator').get(0).getContext("2d");
+    var myNewChart = new Chart(ctx).Line(data, chartOptions);
+}
+
+function reloadAgencyChart(keyId, value) {
+    var data = JSON.parse(JSON.stringify(chartDataAgency[keyId]));
+    if (value) {
+        var newDatasets = [];
+        for(var i in data.datasets) {
+            if (data.datasets[i].label == value) {
+                newDatasets = [data.datasets[i]];
+                break;
+            }
+        }
+        data.datasets = newDatasets;
+    }
+
+    var ctx = $("#" + keyId + '-agency').get(0).getContext("2d");
+    var myNewChart = new Chart(ctx).Line(data, chartOptions);
+}
 
 
 
