@@ -27,6 +27,8 @@ var urlMap = {
     requestFields: '/portal/request-key-fields',
     ndcStats: '/portal/stats/ndc/',
     requestStats: '/portal/stats/me/',
+    aggregatorStats: '/portal/stats/aggregator/',
+    agencyStats: '/portal/stats/agency/',
 };
 var tplInput = underscore.template($('#tpl_input').html());
 var tplMenu = underscore.template($('#tpl_menu').html());
@@ -385,6 +387,8 @@ if ($dashboardContainer.length) {
                     generateChartForKey(response.data[i].id, response.data[i].id, true);
                     generateChartForKey(response.data[i].id, response.data[i].id + "-method-breakdown-canvas", false);
                     generatePieChartForKey(response.data[i].id, response.data[i].id + "-method-breakdown-pie-canvas");
+                    generateChartForParticipants(response.data[i].id, response.data[i].id + "-aggregator", true);
+                    generateChartForParticipants(response.data[i].id, response.data[i].id + "-agency", false);
                 }
             }
         },
@@ -394,8 +398,8 @@ if ($dashboardContainer.length) {
             }
         }
     });
-
 }
+
 
 //1. open page /apis/ - call /portal/request-key-fields
 //2.
@@ -477,6 +481,7 @@ var chartOptions = {
     datasetFill: true,
     //String - A legend template
     legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",
+    tooltipTemplate: "<%= datasetLabel %> - <%= value %>",
     multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
 };
 
@@ -541,7 +546,7 @@ var generateChartForKey = function (planID, canvasId, showRequests) {
 
             //var jsonData = JSON.parse(data);
             var jsonData = data;
-
+            var noData = true;
             var sortMe = [];
             for (var i in jsonData.data) {
                 var thisDate = new Date(jsonData.data[i].id.time);
@@ -581,7 +586,9 @@ var generateChartForKey = function (planID, canvasId, showRequests) {
                         orderRetrieveRQs: orderRetrieveRQs
                     }
                 }
-
+                if (hits > 0) {
+                    noData = false
+                }
                 sortMe.push(obj)
             }
 
@@ -607,8 +614,15 @@ var generateChartForKey = function (planID, canvasId, showRequests) {
                 }
             }
 
-            var ctx = $("#" + canvasId).get(0).getContext("2d");
-            var myNewChart = new Chart(ctx).Line(cData, chartOptions);
+            if (noData == true) {
+                var ctx = $("#" + canvasId).get(0).getContext("2d");
+                ctx.font = '20px Lato';
+                ctx.textAlign = 'center';
+                ctx.fillText('No Available Data', 400, 100);
+            } else {
+                var ctx = $("#" + canvasId).get(0).getContext("2d");
+                var myNewChart = new Chart(ctx).Line(cData, chartOptions);
+            }
         },
         error: function (result) {
             if (result.status == 401) {
@@ -669,8 +683,7 @@ var generatePieChartForKey = function (keyId, canvasId) {
                 ctx.font = "20px Lato";
                 ctx.textAlign = "center";
                 ctx.fillText("No Available Data", 400, 100);
-            }
-            else {
+            } else {
                 var pieData = [
                     {
                         value: airShoppingRQs,
@@ -732,7 +745,95 @@ var generatePieChartForKey = function (keyId, canvasId) {
             }
         }
     })
+};
+var colors = [47, 30, 10, 70, 80, 30, 50, 0, 5, 90];
+var generateChartForParticipants = function (keyId, canvasId, isAggregator) {
+    var now = new Date();
+    now.setDate(now.getDate() + 1);
+    var fixedNowMonth = now.getMonth() + 1;
 
+    var then = new Date();
+    then.setDate(then.getDate() - 7);
+    var fixedThenMonth = then.getMonth() + 1;
+
+
+    var promise;
+
+
+    if (isAggregator) {
+        var url = urlMap.aggregatorStats + keyId;
+    } else {
+        var url = urlMap.agencyStats + keyId;
+    }
+
+    $.signedAjax({
+        url: host + url,
+        success: function (response) {
+            var highlightColor = '#fff';
+
+            var baseColor = '217, 100%, '; //#00245D
+
+            var cData = {
+                labels: [],
+                datasets: []
+            };
+            var i = 0;
+            var elements = [];
+            for (var name in response.data[0].items) {
+                elements.push(name);
+                if (colors.length == i) {
+                    i = 0
+                }
+                cData.datasets.push(getDataSet(name, baseColor, colors[i], highlightColor));
+                i++;
+            }
+
+            //var jsonData = JSON.parse(data);
+            var jsonData = response;
+
+            var sortMe = [];
+            var noData = true;
+
+            if (jsonData.data != null) {
+                for (var i in jsonData.data) {
+                    var thisDate = new Date(jsonData.data[i].id.time);
+                    var l = thisDate.getHours() + ':00';
+                    var hits = jsonData.data[i].hits;
+
+                    var obj = {
+                        d: thisDate,
+                        label: l
+                    };
+
+                    for (var j in elements) {
+                        obj[elements[j]] = jsonData.data[i].items[elements[j]] || 0;
+                    }
+
+                    if (hits > 0) {
+                        noData = false;
+                    }
+                    sortMe.push(obj)
+                }
+            }
+
+            var fixedData = sortByKey(sortMe, 'd');
+            for (var i in fixedData) {
+                cData.labels.push(fixedData[i].label);
+                for (var j in elements) {
+                    cData.datasets[j].data.push(fixedData[i][elements[j]]);
+                }
+            }
+            if (noData == true) {
+                var ctx = $("#" + canvasId).get(0).getContext("2d");
+                ctx.font = '20px Lato';
+                ctx.textAlign = 'center';
+                ctx.fillText('No Available Data', 400, 100);
+            } else {
+                var ctx = $("#" + canvasId).get(0).getContext("2d");
+                var myNewChart = new Chart(ctx).Line(cData, chartOptions);
+            }
+        }
+    });
 };
 
 
