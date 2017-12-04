@@ -14,23 +14,47 @@ public_folder: "/img/uploads"
 # Collections
 collections: # A list of collections the CMS should be able to edit
   # Used in routes, ie.: /admin/collections/:slug/edit
-  - name: "post"
+  - name: "login"
     # Used in the UI, ie.: "New Post"
-    label: "Post"
+    label: "Login"
     # The path to the folder where the documents are stored
-    folder: "content/post"
+    folder: "content/login"
     # Allow users to create new documents in this collection
-    create: true
+    create: false
+    # Filename template e.g. YYYY-MM-DD-title.md
+    slug: "_index"
+    # The fields each document in this collection have
+    fields:
+      - {label: "Title", name: "title", widget: "string", tagname: "h1"}
+      # Use required: false instead of optional: true - https://github.com/netlify/netlify-cms/issues/315
+      #- {label: "Description", name: "description", widget: "text", required: false}
+      #- {label: "Body", name: "body", widget: "markdown"}
+    meta:
+      #- {label: "Date", name: "date", widget: "datetime"}
+  - name: "register"
+    # Used in the UI, ie.: "New Post"
+    label: "Register"
+    # The path to the folder where the documents are stored
+    folder: "content/register"
+    # Allow users to create new documents in this collection
+    create: false
     # Filename template e.g. YYYY-MM-DD-title.md
     slug: "{{slug}}"
     # The fields each document in this collection have
     fields:
       - {label: "Title", name: "title", widget: "string", tagname: "h1"}
-      # Use required: false instead of optional: true - https://github.com/netlify/netlify-cms/issues/315
-      - {label: "Description", name: "description", widget: "text", required: false}
-      - {label: "Body", name: "body", widget: "markdown"}
-    meta:
-      - {label: "Date", name: "date", widget: "datetime"}
+  - name: "apis"
+    # Used in the UI, ie.: "New Post"
+    label: "APIs"
+    # The path to the folder where the documents are stored
+    folder: "content/apis"
+    # Allow users to create new documents in this collection
+    create: false
+    # Filename template e.g. YYYY-MM-DD-title.md
+    slug: "{{slug}}"
+    # The fields each document in this collection have
+    fields:
+      - {label: "Title", name: "title", widget: "string", tagname: "h1"}
 # Does not currently work, see https://github.com/netlify/netlify-cms/issues/248
 #      - {label: "Tags", name: "tags", widget: "list"}
 #      - {label: "Categories", name: "categories", widget: "list"}
