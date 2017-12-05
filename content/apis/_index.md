@@ -1,4 +1,4 @@
 ---
-title: API Catalogue Changed
+title: API Catalogue Edited
 ---
 
