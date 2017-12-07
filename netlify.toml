@@ -3,8 +3,3 @@
 
 [context.deploy-preview.environment]
   HUGO_VERSION = "0.26"
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Ag-Auth-Dev = "*"
