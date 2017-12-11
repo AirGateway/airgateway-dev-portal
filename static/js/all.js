@@ -25,8 +25,9 @@ var urlMap = {
     requestKey: '/portal/request-key/',
     invalidateKey: '/portal/invalidate-key/',
     requestFields: '/portal/request-key-fields',
-    ndcStats: '/portal/stats/ndc/',
-    requestStats: '/portal/stats/me/',
+    requestStats: '/portal/stats/request/',
+    breakdownStats: '/portal/stats/breakdown/',
+    meantimeStats: '/portal/stats/meantime/',
     aggregatorStats: '/portal/stats/aggregator/',
     agencyStats: '/portal/stats/agency/',
 };
@@ -363,34 +364,30 @@ function sendKeyRequest($form) {
 }
 
 
+/******************/
+/*    DASHBOARD   */
+/******************/
 $dashboardContainer = $('#dashboard-panel');
+$dashboardInnerContainer = $('#dashboard-panel-inner');
+
+var plans = [];
 
 if ($dashboardContainer.length) {
     var tplDashboardPlan = underscore.template($('#tpl_dashboard_plan').html());
+    var tplDashboardPlanSelect = underscore.template($('#tpl_dashboard_plan_select').html());
 
     $.signedAjax({
         url: host + urlMap.plans,
         success: function (response) {
             for (var i in response.data) {
                 if (response.data[i].activated) {
-                    $dashboardContainer.append(tplDashboardPlan({
-                        id: response.data[i].id,
-                        name: response.data[i].name,
-                        short_description: response.data[i].short_description,
-                        rate: response.data[i].rate,
-                        per: response.data[i].per,
-                        quota_max: response.data[i].quota_max,
-                        quota_renewal_rate: response.data[i].quota_renewal_rate,
-                    }));
+                    plans.push(response.data[i]);
 
 
-                    generateChartForKey(response.data[i].id, response.data[i].id, true);
-                    generateChartForKey(response.data[i].id, response.data[i].id + "-method-breakdown-canvas", false);
-                    generatePieChartForKey(response.data[i].id, response.data[i].id + "-method-breakdown-pie-canvas");
-                    generateChartForParticipants(response.data[i].id, response.data[i].id + "-aggregator", true);
-                    generateChartForParticipants(response.data[i].id, response.data[i].id + "-agency", false);
                 }
             }
+
+            renderPlanSelect();
         },
         error: function (result) {
             if (result.status == 401) {
@@ -398,6 +395,41 @@ if ($dashboardContainer.length) {
             }
         }
     });
+
+    function renderPlanSelect() {
+        if (plans.length) {
+            $dashboardContainer.prepend(tplDashboardPlanSelect({
+                plans: plans
+            }))
+
+            showPlan(plans[0].id);
+        }
+    }
+
+    function showPlan(planID) {
+        for (var i in plans) {
+            if (plans[i].id === planID) {
+
+                $dashboardInnerContainer.html(tplDashboardPlan({
+                    id: plans[i].id,
+                    name: plans[i].name,
+                    short_description: plans[i].short_description,
+                    rate: plans[i].rate,
+                    per: plans[i].per,
+                    quota_max: plans[i].quota_max,
+                    quota_renewal_rate: plans[i].quota_renewal_rate
+                }));
+
+
+                generateChartForKey(planID, planID, true);
+                generateChartForKey(planID, planID + "-method-breakdown-canvas", false);
+                generateMeanResponseTimeChart(planID,planID + "-method-breakdown-meantime-canvas");
+                generatePieChartForKey(planID, planID + "-method-breakdown-pie-canvas");
+                //generateChartForParticipants(planID, planID + "-aggregator", true);
+                //generateChartForParticipants(planID, planID + "-agency", false);
+            }
+        }
+    }
 }
 
 
@@ -503,7 +535,7 @@ var typesOfRequests = [
 ];
 
 
-var generateChartForKey = function (planID, canvasId, showRequests) {
+var generateChartForKey = function (planID, canvasID, showRequests) {
     var now = new Date();
     now.setDate(now.getDate() + 1);
     var fixedNowMonth = now.getMonth() + 1;
@@ -513,7 +545,7 @@ var generateChartForKey = function (planID, canvasId, showRequests) {
     var fixedThenMonth = then.getMonth() + 1;
 
 
-    var url = urlMap.ndcStats + planID;
+    var url = urlMap.breakdownStats + planID;
 
     if (showRequests) {
         url = urlMap.requestStats + planID;
@@ -529,7 +561,7 @@ var generateChartForKey = function (planID, canvasId, showRequests) {
             var cData = {
                 labels: [],
                 datasets: [
-                    getDataSet('Requests', baseColor, 47, highlightColor),
+                    getDataSet('Success', baseColor, 47, highlightColor),
                     getDataSet('Errors', baseColor, 30, highlightColor),
                     getDataSet('AirShopping', baseColor, 10, highlightColor),
                     getDataSet('FlightPrice', baseColor, 70, highlightColor),
@@ -548,16 +580,18 @@ var generateChartForKey = function (planID, canvasId, showRequests) {
             var jsonData = data;
             var noData = true;
             var sortMe = [];
+
             for (var i in jsonData.data) {
                 var thisDate = new Date(jsonData.data[i].id.time);
                 var l = thisDate.getHours() + ':00';
-                var hits = jsonData.data[i].hits;
+                var success = jsonData.data[i].success;
                 var errors = jsonData.data[i].error;
+                var hits = jsonData.data[i].hits;
 
                 var obj = {
                     d: thisDate,
                     label: l,
-                    hits: hits,
+                    success: success,
                     errors: errors
                 };
 
@@ -574,7 +608,7 @@ var generateChartForKey = function (planID, canvasId, showRequests) {
                     var obj = {
                         d: thisDate,
                         label: l,
-                        hits: hits,
+                        success: success,
                         errors: errors,
                         airShoppingRQs: airShoppingRQs,
                         flightPriceRQs: flightPriceRQs,
@@ -609,18 +643,18 @@ var generateChartForKey = function (planID, canvasId, showRequests) {
             } else {
                 for (var i in fixedData) {
                     cData.labels.push(fixedData[i].label);
-                    cData.datasets[0].data.push(fixedData[i].hits);
+                    cData.datasets[0].data.push(fixedData[i].success);
                     cData.datasets[1].data.push(fixedData[i].errors)
                 }
             }
 
             if (noData == true) {
-                var ctx = $("#" + canvasId).get(0).getContext("2d");
+                var ctx = $("#" + canvasID).get(0).getContext("2d");
                 ctx.font = '20px Lato';
                 ctx.textAlign = 'center';
                 ctx.fillText('No Available Data', 400, 100);
             } else {
-                var ctx = $("#" + canvasId).get(0).getContext("2d");
+                var ctx = $("#" + canvasID).get(0).getContext("2d");
                 var myNewChart = new Chart(ctx).Line(cData, chartOptions);
             }
         },
@@ -632,7 +666,7 @@ var generateChartForKey = function (planID, canvasId, showRequests) {
     });
 };
 
-var generatePieChartForKey = function (keyId, canvasId) {
+var generatePieChartForKey = function (planID, canvasID) {
     var now = new Date();
     now.setDate(now.getDate() + 1);
     var fixedNowMonth = now.getMonth() + 1;
@@ -641,7 +675,7 @@ var generatePieChartForKey = function (keyId, canvasId) {
     then.setDate(then.getDate() - 7);
     var fixedThenMonth = then.getMonth() + 1;
 
-    var url = urlMap.ndcStats + keyId;
+    var url = urlMap.breakdownStats + planID;
     $.signedAjax({
         url: host + url,
         success: function (data) {
@@ -679,7 +713,7 @@ var generatePieChartForKey = function (keyId, canvasId) {
             }
 
             if (noData) {
-                var ctx = $("#" + canvasId).get(0).getContext("2d");
+                var ctx = $("#" + canvasID).get(0).getContext("2d");
                 ctx.font = "20px Lato";
                 ctx.textAlign = "center";
                 ctx.fillText("No Available Data", 400, 100);
@@ -735,7 +769,7 @@ var generatePieChartForKey = function (keyId, canvasId) {
                     }
                 ];
 
-                var ctx = $("#" + canvasId).get(0).getContext("2d");
+                var ctx = $("#" + canvasID).get(0).getContext("2d");
                 var pieChart = new Chart(ctx).Doughnut(pieData);
             }
         },
@@ -746,8 +780,115 @@ var generatePieChartForKey = function (keyId, canvasId) {
         }
     })
 };
+
+
+var generateMeanResponseTimeChart = function (planID, canvasID) {
+    var url = urlMap.meantimeStats + planID;
+    $.signedAjax({
+        url: host + url,
+        success: function (response) {
+            var highlightColor = '#fff';
+            var baseColor = '217, 100%, '; //#00245D
+
+            var cData = {
+                labels: [],
+                datasets: [
+                    getDataSet('Requests', baseColor, 47, highlightColor),
+                    getDataSet('Errors', baseColor, 30, highlightColor),
+                    getDataSet('AirShopping', baseColor, 10, highlightColor),
+                    getDataSet('FlightPrice', baseColor, 70, highlightColor),
+                    getDataSet('SeatAvailability', baseColor, 80, highlightColor),
+                    getDataSet('BaggageAllowance', baseColor, 40, highlightColor),
+                    getDataSet('ItinReshop', baseColor, 30, highlightColor),
+                    getDataSet('OrderCreate', baseColor, 50, highlightColor),
+                    getDataSet('OrderCancel', baseColor, 0, highlightColor),
+                    getDataSet('OrderRetrieve', baseColor, 5, highlightColor),
+                    getDataSet('Other', baseColor, 90, highlightColor)
+                ]
+            };
+
+
+            var sortMe = [];
+            var noData = false;
+
+            if (response.data == null) {
+                noData = true;
+            } else {
+                noData = true;
+                for (var i in response.data) {
+                    var thisDate = new Date(response.data[i].id.time);
+                    var l = thisDate.getHours() + ':00';
+                    var hits = response.data[i].hits;
+                    var errors = response.data[i].error;
+
+                    var obj;
+
+                    any = {
+                        d: thisDate,
+                        label: l
+                    };
+
+                    var airShoppingRQs = response.data[i].AirShoppingRQ || 0;
+                    var flightPriceRQs = response.data[i].FlightPriceRQ || 0;
+                    var seatAvailabilityRQs = response.data[i].SeatAvailabilityRQ || 0;
+                    var baggageAllowanceRQs = response.data[i].BaggageAllowanceRQ || 0;
+                    var itinReshopRQs = response.data[i].ItinReshopRQ || 0;
+                    var orderCreateRQs = response.data[i].OrderCreateRQ || 0;
+                    var orderCancelRQs = response.data[i].OrderCancelRQ || 0;
+                    var orderRetrieveRQs = response.data[i].OrderRetrieveRQ || 0;
+
+                    obj = {
+                        d: thisDate,
+                        label: l,
+                        airShoppingRQs: airShoppingRQs,
+                        flightPriceRQs: flightPriceRQs,
+                        seatAvailabilityRQs: seatAvailabilityRQs,
+                        baggageAllowanceRQs: baggageAllowanceRQs,
+                        itinReshopRQs: itinReshopRQs,
+                        orderCreateRQs: orderCreateRQs,
+                        orderCancelRQs: orderCancelRQs,
+                        orderRetrieveRQs: orderRetrieveRQs
+                    };
+
+                    if (airShoppingRQs || flightPriceRQs || seatAvailabilityRQs || baggageAllowanceRQs || itinReshopRQs || orderCreateRQs || orderCancelRQs || orderRetrieveRQs) {
+                        noData = false;
+                    }
+
+
+                    sortMe.push(obj)
+                }
+            }
+
+            var fixedData = sortByKey(sortMe, 'd');
+
+            for (var i in fixedData) {
+                cData.labels.push(fixedData[i].label);
+                cData.datasets[2].data.push(fixedData[i].airShoppingRQs);
+                cData.datasets[3].data.push(fixedData[i].flightPriceRQs);
+                cData.datasets[4].data.push(fixedData[i].seatAvailabilityRQs);
+                cData.datasets[5].data.push(fixedData[i].baggageAllowanceRQs);
+                cData.datasets[6].data.push(fixedData[i].itinReshopRQs);
+                cData.datasets[7].data.push(fixedData[i].orderCreateRQs);
+                cData.datasets[8].data.push(fixedData[i].orderCancelRQs);
+                cData.datasets[9].data.push(fixedData[i].orderRetrieveRQs)
+            }
+
+            var ctx = $("#" + canvasID).get(0).getContext("2d");
+
+            if (noData == true) {
+                ctx.font = '20px Lato';
+                ctx.textAlign = 'center';
+                ctx.fillText('No Available Data', 400, 100);
+            } else {
+                var myNewChart = new Chart(ctx).Line(cData, chartOptions);
+            }
+        }
+    });
+}
+
 var colors = [47, 30, 10, 70, 80, 30, 50, 0, 5, 90];
-var generateChartForParticipants = function (keyId, canvasId, isAggregator) {
+
+/*var generateChartForParticipants = function (keyId, canvasID, isAggregator) {
     var now = new Date();
     now.setDate(now.getDate() + 1);
     var fixedNowMonth = now.getMonth() + 1;
@@ -840,12 +981,12 @@ var generateChartForParticipants = function (keyId, canvasId, isAggregator) {
                 }
             }
             if (noData == true) {
-                var ctx = $("#" + canvasId).get(0).getContext("2d");
+                var ctx = $("#" + canvasID).get(0).getContext("2d");
                 ctx.font = '20px Lato';
                 ctx.textAlign = 'center';
                 ctx.fillText('No Available Data', 400, 100);
             } else {
-                var ctx = $("#" + canvasId).get(0).getContext("2d");
+                var ctx = $("#" + canvasID).get(0).getContext("2d");
                 var myNewChart = new Chart(ctx).Line(cData, chartOptions);
             }
 
@@ -861,9 +1002,9 @@ var agencyElements = [];
 
 function reloadSelects(keyId, isAggregator) {
     var select = $('.' + keyId + (isAggregator ? '-aggregatorSelect' : '-agencySelect'));
-    elements = isAggregator ?  aggregatorElements[keyId] : agencyElements[keyId];
+    elements = isAggregator ? aggregatorElements[keyId] : agencyElements[keyId];
     for (var i in elements) {
-        select.append('<option value="'+elements[i]+'">'+elements[i]+'</option>')
+        select.append('<option value="' + elements[i] + '">' + elements[i] + '</option>')
     }
 
 }
@@ -872,7 +1013,7 @@ function reloadAggregatorChart(keyId, value) {
     var data = JSON.parse(JSON.stringify(chartDataAggregator[keyId]));
     if (value) {
         var newDatasets = [];
-        for(var i in data.datasets) {
+        for (var i in data.datasets) {
             if (data.datasets[i].label == value) {
                 newDatasets = [data.datasets[i]];
                 break;
@@ -889,7 +1030,7 @@ function reloadAgencyChart(keyId, value) {
     var data = JSON.parse(JSON.stringify(chartDataAgency[keyId]));
     if (value) {
         var newDatasets = [];
-        for(var i in data.datasets) {
+        for (var i in data.datasets) {
             if (data.datasets[i].label == value) {
                 newDatasets = [data.datasets[i]];
                 break;
@@ -900,7 +1041,7 @@ function reloadAgencyChart(keyId, value) {
 
     var ctx = $("#" + keyId + '-agency').get(0).getContext("2d");
     var myNewChart = new Chart(ctx).Line(data, chartOptions);
-}
+}*/
 
 
 
