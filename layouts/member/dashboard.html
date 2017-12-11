@@ -7,11 +7,28 @@
     You can enroll for access by visiting <a href="/apis/">the API Catalogue</a> page
 </p>
 
-<h2>Your API Subscriptions</h2>
+<h2>Select API Subscription</h2>
 
-<div id="dashboard-panel" class="">
+<div id="dashboard-panel">
 
+    <div id="dashboard-panel-inner">
+
+    </div>
 </div>
+
+<script id="tpl_dashboard_plan_select" type="text/html">
+    <div class="row">
+        <div class="col-lg-6 col-xs-12">
+            <div class="form-group">
+                <select id="dashboard-plan-select" class="form-control" onchange="showPlan(this.value)">
+                    {{ "<% for (var i in plans) { %>" | safeHTML }}
+                        <option value="<%- plans[i].id %>">{{ "<%- plans[i].name %>" | safeHTML }}</option>
+                    {{ "<% } %>" | safeHTML }}
+                </select>
+            </div>
+        </div>
+    </div>
+</script>
 
 
 <script id="tpl_dashboard_plan" type="text/html">
@@ -33,12 +50,17 @@
             <div class="well">
                 <h4>API usage last hours: </h4>
                 <canvas id="<%- id %>" width="800" height="200"></canvas>
-                <h4>NDC Method breakdown: </h4>
+
+                <h4>Method breakdown: </h4>
                 <canvas id="<%- id %>-method-breakdown-canvas" width="800" height="200"></canvas>
-                <h4>NDC Method breakdown, percentage: </h4>
+
+                <h4>Method breakdown meantime, ms: </h4>
+                <canvas id="<%- id %>-method-breakdown-meantime-canvas" width="800" height="200"></canvas>
+
+                <h4>Method breakdown, percentage: </h4>
                 <canvas id="<%- id %>-method-breakdown-pie-canvas" width="800" height="300"></canvas>
 
-                <h4>Aggregator participants: </h4>
+                <!--<h4>Aggregator participants: </h4>
                 <div class="form-inline">
                     <select class="form-control <%- id %>-aggregatorSelect" onchange="reloadAggregatorChart('<%- id %>',this.value)">
                         <option value="">All aggregators</option>
@@ -52,7 +74,7 @@
                         <option value="">All agencies</option>
                     </select>
                 </div>
-                <canvas id="<%- id %>-agency" width="800" height="200"></canvas>
+                <canvas id="<%- id %>-agency" width="800" height="200"></canvas>-->
             </div>
         </div>
     </div>
