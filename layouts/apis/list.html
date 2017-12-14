@@ -18,11 +18,11 @@
             <h1>{{ .Title }}</h1>
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Request a Key</h3>
+                    <h3 class="panel-title">{{.Params.request_key}}</h3>
                 </div>
                 <div class="panel-body">
                     <form id="plan-form" action="" method="POST">
-                        <input type="submit" class="btn btn-success" value="Request">
+                        <input type="submit" class="btn btn-success" value="{{.Params.request}}">
                     </form>
                 </div>
             </div>
@@ -33,39 +33,36 @@
 <div id="plan-result" class="container collapse">
     <div class="row">
         <div class="col-lg-12">
-            <h1>Request a Key</h1>
+            <h1>{{.Params.request_key}}</h1>
             <div class="error-exist collapse">
                 <div class="panel panel-danger">
                     <div class="panel-body">
-                        There is already an API key for this Plan associated with this account
+                        {{.Params.key_for_this_plan}}
                     </div>
                 </div>
                 <p>
-                    It appears there is already an API key associated with this account. To reset your key, or to change
-                    your key details, please contact your site administrator.
+                    {{.Params.key_already_associated}}
                 </p>
             </div>
             <div class="ok-requested collapse">
                 <div class="panel panel-success">
                     <div class="panel-body">
-                        API Key successfully requested. Administrator will review your request and send API key to
-                        submitted
-                        email.
+                        {{.Params.requested_wait_approve}}
                     </div>
                 </div>
             </div>
             <div class="ok-approved collapse">
                 <div class="panel panel-success">
                     <div class="panel-body">
-                        <p>API Key successfully requested. Please ensure you saved a key.</p>
-                        <p>Your API Key: <strong class="ok-approved-key"></strong></p>
+                        <p>{{.Params.successfully_requested}}</p>
+                        <p>{{.Params.your_api_key}}: <strong class="ok-approved-key"></strong></p>
                     </div>
                 </div>
             </div>
             <div class="ok-invalidated collapse">
                 <div class="panel panel-success">
                     <div class="panel-body">
-                        <p>API Key successfully invalidated. Please refresh a page if you want to request key again.</p>
+                        <p>{{.Params.successfully_invalidated}}</p>
                     </div>
                 </div>
             </div>
@@ -81,11 +78,11 @@
         <p></p>
         {{ "<% if (activated) { %>" | safeHTML }}
         <a href="/member/invalidate-key/<%- id %>" class="btn btn-danger btn-block invalidateKey" data-plan="<%- id %>">
-            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp; Invalidate an API key
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp; {{.Params.invalidate_api_key}}
         </a>
         {{ "<% } else { %>" | safeHTML }}
         <a href="/member/plan-request/<%- id %>" class="btn btn-success btn-block planRequest" data-plan="<%- id %>">
-            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; Request an API key
+            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; {{.Params.request_api_key}}
         </a>
         {{ "<% } %>" | safeHTML }}
 

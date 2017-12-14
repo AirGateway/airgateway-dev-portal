@@ -55,6 +55,18 @@ collections: # A list of collections the CMS should be able to edit
     # The fields each document in this collection have
     fields:
       - {label: "Title", name: "title", widget: "string", tagname: "h1"}
+      - {label: "Invalidate API key", name: "invalidate_api_key", widget: "string"}
+      - {label: "Request API key", name: "request_api_key", widget: "string"}
+      - {label: "Successfully Invalidated", name: "successfully_invalidated", widget: "string"}
+      - {label: "Successfully Requested", name: "successfully_requested", widget: "string"}
+      - {label: "Your API Key", name: "your_api_key", widget: "string"}
+      - {label: "Requested ok, wait approve", name: "requested_wait_approve", widget: "string"}
+      - {label: "Key for this plan", name: "key_for_this_plan", widget: "string"}
+      - {label: "Key already associated", name: "key_already_associated", widget: "string"}
+      - {label: "Request key", name: "request_key", widget: "string"}
+      - {label: "Request", name: "request", widget: "string"}
+
+
 # Does not currently work, see https://github.com/netlify/netlify-cms/issues/248
 #      - {label: "Tags", name: "tags", widget: "list"}
 #      - {label: "Categories", name: "categories", widget: "list"}
