@@ -874,12 +874,12 @@ var generateMeanResponseTimeChart = function (planID, canvasID) {
             }
 
             var ctx = $("#" + canvasID).get(0).getContext("2d");
-            
+
             if (noData == true) {
                 ctx.font = '20px Lato';
                 ctx.textAlign = 'center';
                 ctx.fillText('No Available Data', 400, 100);
-            } else {                
+            } else {
                 var myNewChart = new Chart(ctx).Line(cData, chartOptions);
             }
         }

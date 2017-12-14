@@ -22,7 +22,7 @@
             <div class="form-group">
                 <select id="dashboard-plan-select" class="form-control" onchange="showPlan(this.value)">
                     {{ "<% for (var i in plans) { %>" | safeHTML }}
-                        <option value="<%- plans[i].id %>">{{ "<%- plans[i].name %>" | safeHTML }}</option>
+                    <option value="<%- plans[i].id %>">{{ "<%- plans[i].name %>" | safeHTML }}</option>
                     {{ "<% } %>" | safeHTML }}
                 </select>
             </div>
