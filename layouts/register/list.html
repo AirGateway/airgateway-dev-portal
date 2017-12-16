@@ -16,21 +16,21 @@
 
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Register</h3>
+                        <h3 class="panel-title">{{.Title}}</h3>
                     </div>
                     <div class="panel-body">
                         <form action="" method="POST">
                             <div class="form-group">
-                                <label for="username">Email address</label>
+                                <label for="username">{{.Params.email}}</label>
                                 <input required
                                        type="email"
                                        class="form-control"
                                        id="username"
                                        name="username"
-                                       placeholder="Enter email">
+                                       placeholder="{{.Params.emailplaceholder}}">
                             </div>
                             <div class="form-group">
-                                <label for="password">Password</label>
+                                <label for="password">{{.Params.password}}</label>
                                 <input minlength="6"
                                        required
                                        type="password"
@@ -41,20 +41,20 @@
                                        autocomplete="off">
                             </div>
                             <div class="form-group">
-                                <label for="password_confirm">Confirm Password</label>
+                                <label for="password_confirm">{{.Params.passwordconfirm}}</label>
                                 <input minlength="6"
                                        required
                                        type="password"
                                        class="form-control"
                                        id="password_confirm"
                                        name="password_confirm"
-                                       placeholder="Password confirmation" autocomplete="off">
+                                       placeholder="{{.Params.passwordconfirmationplaceholder}}" autocomplete="off">
                             </div>
 
 
 
 
-                            <input type="submit" class="btn btn-success" value="Sign up">
+                            <input type="submit" class="btn btn-success" value="{{.Params.submit}}">
                         </form>
 
                     </div>
