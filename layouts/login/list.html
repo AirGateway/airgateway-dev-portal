@@ -4,7 +4,7 @@
         <div class="col-md-7 center">
             <div class="panel panel-default" id="login-panel">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Login</h3>
+                    <h3 class="panel-title">{{.Title}}</h3>
                 </div>
                 <div class="panel-body">
                     <div class="error-summary collapse">
@@ -17,17 +17,17 @@
 
                     <form action="" method="POST">
                         <div class="form-group">
-                            <label for="username">Email address</label>
+                            <label for="username">{{.Params.email}}</label>
                             <input type="email" class="form-control" id="username" name="username"
-                                   placeholder="Enter email">
+                                   placeholder="{{.Params.emailplaceholder}}">
                         </div>
                         <div class="form-group">
-                            <label for="password">Password</label>
+                            <label for="password">{{.Params.password}}</label>
                             <input type="password" class="form-control" id="password" name="password"
                                    placeholder="Password" autocomplete="off">
                         </div>
 
-                        <input type="submit" class="btn btn-success" value="Login">
+                        <input type="submit" class="btn btn-success" value="{{.Params.submit}}">
                     </form>
                 </div>
             </div>

@@ -1,5 +1,6 @@
 ---
-title: API Catalogue Edited
+css: all.js
+title: API Catalogue
 invalidate_api_key: Invalidate an API key
 request_api_key: Request an API key
 successfully_invalidated: API Key successfully invalidated. Please refresh a page if you want to request key again.
