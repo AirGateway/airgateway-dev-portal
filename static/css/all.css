@@ -105,7 +105,6 @@ label.error {
 }
 
 #home-jumbotron {
-    background-image: url(/images/bg_tempelhof.jpg);
     background-size: cover;
     background-position: center;
     height: 550px;
