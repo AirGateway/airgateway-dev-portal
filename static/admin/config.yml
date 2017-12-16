@@ -8,51 +8,54 @@ backend:
 publish_mode: editorial_workflow
 
 # Save image uploads to /img/uploads - https://gohugo.io/themes/creation/#static
-media_folder: "static/img/uploads"
-public_folder: "/img/uploads"
+media_folder: "static/images"
+public_folder: "static/images"
 
 # Collections
 collections: # A list of collections the CMS should be able to edit
-  # Used in routes, ie.: /admin/collections/:slug/edit
-  - name: "login"
-    # Used in the UI, ie.: "New Post"
-    label: "Login"
-    # The path to the folder where the documents are stored
-    folder: "content/login"
-    # Allow users to create new documents in this collection
+  - name: "home"
+    label: "Home"
+    folder: "content/home"
     create: false
-    # Filename template e.g. YYYY-MM-DD-title.md
     slug: "_index"
-    # The fields each document in this collection have
     fields:
-      - {label: "Title", name: "title", widget: "string", tagname: "h1"}
-      # Use required: false instead of optional: true - https://github.com/netlify/netlify-cms/issues/315
-      #- {label: "Description", name: "description", widget: "text", required: false}
-      #- {label: "Body", name: "body", widget: "markdown"}
-    meta:
-      #- {label: "Date", name: "date", widget: "datetime"}
+      - {label: "API Dashboard Menu option", name: "menuapidashboard", widget: "string"}
+      - {label: "Edit Profile Menu option", name: "menueditprofile", widget: "string"}
+      - {label: "Menu log out", name: "menulogout", widget: "string"}
+      - {label: "Footer legend", name: "footerlegend", widget: "markdown"}
+      - {label: "Account menu option", name: "account", widget: "string"}
+      - {label: "Jumbo Title", name: "jumbotitle", widget: "string"}
+      - {label: "View APIs link", name: "viewapis", widget: "string"}
+      - {label: "Background image", name: "backgroundimage", widget: "image"}
+  - name: "login"
+    label: "Login"
+    folder: "content/login"
+    create: false
+    slug: "_index"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Email", name: "email", widget: "string"}
+      - {label: "Email Placeholder", name: "emailplaceholder", widget: "string", default: "Enter email"}
+      - {label: "Password", name: "password", widget: "string"}
+      - {label: "Submit", name: "submit", widget: "string", default: "Login"}
   - name: "register"
-    # Used in the UI, ie.: "New Post"
     label: "Register"
-    # The path to the folder where the documents are stored
     folder: "content/register"
-    # Allow users to create new documents in this collection
     create: false
-    # Filename template e.g. YYYY-MM-DD-title.md
     slug: "{{slug}}"
-    # The fields each document in this collection have
     fields:
-      - {label: "Title", name: "title", widget: "string", tagname: "h1"}
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Email address", name: "email", widget: "string"}
+      - {label: "Email placeholder", name: "emailplaceholder", widget: "string"}
+      - {label: "Password", name: "password", widget: "string"}
+      - {label: "Password Confirm Placeholder", name: "passwordconfirmationplaceholder", widget: "string"}
+      - {label: "Confirm Password", name: "passwordconfirm", widget: "string"}
+      - {label: "Submit", name: "submit", widget: "string"}
   - name: "apis"
-    # Used in the UI, ie.: "New Post"
     label: "APIs"
-    # The path to the folder where the documents are stored
     folder: "content/apis"
-    # Allow users to create new documents in this collection
     create: false
-    # Filename template e.g. YYYY-MM-DD-title.md
     slug: "{{slug}}"
-    # The fields each document in this collection have
     fields:
       - {label: "Title", name: "title", widget: "string", tagname: "h1"}
       - {label: "Invalidate API key", name: "invalidate_api_key", widget: "string"}
@@ -65,6 +68,18 @@ collections: # A list of collections the CMS should be able to edit
       - {label: "Key already associated", name: "key_already_associated", widget: "string"}
       - {label: "Request key", name: "request_key", widget: "string"}
       - {label: "Request", name: "request", widget: "string"}
+  - name: "links"
+    label: "Home page Links"
+    folder: "content/links"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Description", name: "description", widget: "string"}
+      - {label: "Date", name: "date", widget: "date"}
+      - {label: "Draft", name: "draft", widget: "boolean"}
+      - {label: "Link", name: "link", widget: "string"}
+      - {label: "Weight", name: "weight", widget: "number", default: 10, min: 2, max: 50}
 
 
 # Does not currently work, see https://github.com/netlify/netlify-cms/issues/248
