@@ -1,0 +1,94 @@
+<h1>Conversation with Airline</h1>
+
+<div class="panel panel-primary" id="chat-panel">
+  <div class="panel-heading">
+    <h3 class="panel-title">Chat</h3>
+  </div>
+  <div class="panel-body">
+    <div class="chat__container">
+      <div class="chat__messages" id="chatbox">
+
+      </div>
+      <div class="chat__textbox">
+        <div class="row">
+          <div class="col-lg-8">
+            <textarea
+                id="textbox"
+                class="form-control"
+                placeholder="Type your message here..."
+            ></textarea>
+            <div id="fileitem-queue">
+
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="btn btn-primary" style="margin-right: 10px" onclick="createMessage()">Send Message</div>
+            <div class="btn btn-primary" onclick="$('#fileupload').click()">Add File</div>
+            <input style="display:none" id="fileupload" type="file" multiple/><br/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script id="tpl_chat_messages" type="text/html">
+  <div class="chat__message clearfix">
+    {{ "<% if (!message.date) { %>" | safeHTML }}
+    <div *ngIf="!message.date">
+      <div class="chat__message-author">
+        [{{ "<%- message.time %>" | safeHTML }}]
+        <span class="d-inline-block" style="margin-left: 8px">{{ "<%- message.author %>" | safeHTML }}:</span>
+      </div>
+      {{ "<% if (message.type == 'text') { %>" | safeHTML }}
+      <div class="chat__message-text">
+        {{ "<%= nl2br(message.text) %>" | safeHTML }}
+      </div>
+      {{ "<% } else { %>" | safeHTML }}
+      <div class="chat__message-text">
+        <i class="glyphicon glyphicon-file"></i>
+        {{ "<%- message.text %>" | safeHTML }}
+        <a href="#" class="inversed"
+           onclick="event.preventDefault(); openDocument('<%- message.document_id %>')"
+        >Open</a>
+      </div>
+      {{ "<% } %>" | safeHTML }}
+    </div>
+    {{ "<% } else { %>" | safeHTML }}
+    <div class="chat__message-line">
+      <div>
+        <div>
+          {{ "<%- message.date %>" | safeHTML }}
+        </div>
+      </div>
+    </div>
+    {{ "<% } %>" | safeHTML }}
+  </div>
+</script> {{ "<!-- /#tpl_chat_messages -->" | safeHTML }}
+
+
+<script id="tpl_chat_files" type="text/html">
+  {{ "<% if (files.length) { %>" | safeHTML }}
+  <table style="margin-top: 10px; margin-bottom: 10px" class="table">
+    <thead>
+    <tr>
+      <th>Selected files to upload:</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{ "<% for (var i in files) { %>" | safeHTML }}
+    <tr>
+      <td><strong>{{ "<%- files[i].name %>" | safeHTML }}</strong></td>
+      <td nowrap>
+        <button type="button" class="btn btn-danger btn-xs"
+                onclick="removeItemFromQueue(<%- i %>)">
+          <span class="glyphicon glyphicon-trash"></span> Remove
+        </button>
+      </td>
+    </tr>
+    {{ "<% } %>" | safeHTML }}
+    </tbody>
+  </table>
+  {{ "<% } %>" | safeHTML }}
+</script>

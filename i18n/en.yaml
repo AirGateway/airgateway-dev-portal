@@ -45,3 +45,6 @@
 
 - id: links
   translation: "Links"
+
+- id: chat
+  translation: "Chat"

@@ -68,23 +68,30 @@
                 <div class= "dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="/member/dashboard/">API Dashboard</a>
                     <a class="dropdown-item" href="/member/profile/">Edit profile</a>
-                    <div class="dropdown-divider"></div>
+                  <div class="dropdown-divider"></div>
                     <a id="logout" class="dropdown-item" href="#">Log out</a>
                 </div>
             </div>
             {{ with .Site.GetPage "section" "apis" }}
             {{ $permalinkURL := .URL | absLangURL }}
-            <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "api_catalogue" }}</a>
+              <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "api_catalogue" }}</a>
+            {{end}}
+
+            {{ with .Site.GetPage "page" "member/chat.md" }}
+            {{ $permalinkURL := .URL | absLangURL }}
+            <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "chat" }} <span class="chat-counter"></span></a>
             {{end}}
         {{ "<% } else { %>" | safeHTML }}
             {{ with .Site.GetPage "section" "register" }}
             {{ $permalinkURL := .URL | absLangURL }}
             <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "register" }}</a>
             {{ end }}
+
             {{ with .Site.GetPage "section" "login" }}
             {{ $permalinkURL := .URL | absLangURL }}
             <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "login" }}</a>
             {{ end }}
+
         {{ "<% } %>" | safeHTML }}
         {{ with .Site.GetPage "section" "validator" }}
         {{ $permalinkURL := .URL | absLangURL }}
@@ -121,6 +128,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js" integrity="sha256-obZACiHd7gkOk9iIL/pimWMTJ4W/pBsKu+oZnSeBIek=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js" integrity="sha256-8E6QUcFg1KTnpEU8TFGhpTGHw5fJqB9vCms3OhAYLqw=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.19.2/js/vendor/jquery.ui.widget.min.js" integrity="sha256-hPM1Xwe/KmwWNbU0HhweLiFK9sq3++pUhTLEHJs8OUo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.19.2/js/jquery.iframe-transport.js" integrity="sha256-9umGTFRck4NDqGn89GS+qtjN9frcgKaIQvR4Nq3yJbQ=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.19.2/js/jquery.fileupload.min.js" integrity="sha256-+J+SpyU2Uhi/tNzykzuKR9dABMiaMuw3x7AsqBzjw2Q=" crossorigin="anonymous"></script>
+
     <script>
         // the global _ will now be underscore
         window.lodash = _.noConflict();

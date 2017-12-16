@@ -447,7 +447,6 @@ hr {
     border-bottom-color: #D52C36
 }
 
-
 dt, kbd kbd, label {
     font-weight: 700;
 }
@@ -456,3 +455,71 @@ button, html input[type=button], input[type=reset], input[type=submit] {
     -webkit-appearance: button;
     cursor: pointer;
 }
+
+/* chat messages */
+
+.chat__messages {
+    padding: 0px 20px 0 20px;
+    height: 400px;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.chat__message-line {
+    text-align: center;
+    margin: 4px 0px;
+    font-size: 16px;
+    color: #888;
+    position: relative;
+    height: 24px;
+}
+
+.chat__message-line:after {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 1px;
+    background: #ccc;
+    content: "";
+    width: 100%;
+    display: block;
+    z-index: 9;
+}
+
+.chat__message-line div div {
+    position: relative;
+    left: -50%;
+    background-color: white;
+}
+
+.chat__message-line div {
+    display: inline-block;
+    padding: 0px 10px;
+    z-index: 10;
+    left: 46%;
+    position: absolute;
+
+}
+
+.chat__message-author {
+    float: left;
+}
+
+.chat__message-text {
+    float: left;
+    margin-left: 10px;
+}
+
+.chat__textbox {
+    border-top: 1px solid #006699;
+    padding: 20px 5px 0 20px;
+    margin-top: 20px;
+}
+
+.chat__textbox textarea {
+    resize: vertical;
+    max-height: 200px;
+    min-height: 60px;
+}
+
+

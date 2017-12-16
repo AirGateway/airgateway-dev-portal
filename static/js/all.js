@@ -1,10 +1,15 @@
 /****************/
 /*    COMMON    */
 /****************/
-String.prototype.toUnderscore = function () {
+
+/*String.prototype.toUnderscore = function () {
     return this.replace(/([A-Z])/g, function ($1) {
         return "_" + $1.toLowerCase();
     });
+};*/
+
+function nl2br(text) {
+    return text.replace(/([^>])\n/g, '$1<br/>');
 };
 
 $.signedAjax = function (data) {
@@ -25,6 +30,11 @@ var urlMap = {
     requestKey: '/portal/request-key/',
     invalidateKey: '/portal/invalidate-key/',
     requestFields: '/portal/request-key-fields',
+    /* messaging */
+    chat: '/portal/chat/',
+    newMessages: '/portal/chat/new-messages',
+    document: '/portal/documents/',
+    /* stats */
     requestStats: '/portal/stats/request/',
     breakdownStats: '/portal/stats/breakdown/',
     meantimeStats: '/portal/stats/meantime/',
@@ -35,12 +45,33 @@ var tplInput = underscore.template($('#tpl_input').html());
 var tplMenu = underscore.template($('#tpl_menu').html());
 var tplHiddenInput = underscore.template($('#tpl_hidden_input').html());
 
+
 //initialization
 $(function () {
     //1. render dynamic part of layout template
     $('.nav .container').append(tplMenu());
+
+    //2. check messages count
+
+    if (localStorage.token) {
+        checkNewMessages();
+
+        setInterval(function () {
+            checkNewMessages()
+        }, 1000 * 30);
+    }
 });
 
+function checkNewMessages() {
+    $.signedAjax({
+        url: host + urlMap.newMessages,
+        success: function (response) {
+            if (response.status === 'OK' && parseInt(response.meta) > 0) {
+                $('.chat-counter').html('(' + response.meta + ')')
+            }
+        }
+    });
+}
 
 $summaryErrors = $('.error-summary');
 $successFormPanel = $('.success-form');
@@ -274,7 +305,7 @@ if ($planListingPage) {
 
 $(document).on('click', '.planRequest', function (e) {
     e.preventDefault();
-    $planForm = $('#plan-form');
+    var $planForm = $('#plan-form');
     $planForm.prepend(tplHiddenInput({
         name: 'plan_id',
         value: $(this).data('plan')
@@ -423,7 +454,7 @@ if ($dashboardContainer.length) {
 
                 generateChartForKey(planID, planID, true);
                 generateChartForKey(planID, planID + "-method-breakdown-canvas", false);
-                generateMeanResponseTimeChart(planID,planID + "-method-breakdown-meantime-canvas");
+                generateMeanResponseTimeChart(planID, planID + "-method-breakdown-meantime-canvas");
                 generatePieChartForKey(planID, planID + "-method-breakdown-pie-canvas");
                 //generateChartForParticipants(planID, planID + "-aggregator", true);
                 //generateChartForParticipants(planID, planID + "-agency", false);
@@ -432,9 +463,234 @@ if ($dashboardContainer.length) {
     }
 }
 
+/******************/
+/*    MESSAGES    */
+/******************/
 
-//1. open page /apis/ - call /portal/request-key-fields
-//2.
+
+$chatContainer = $('#chat-panel');
+$chatMessagesContainer = $('.chat__messages');
+var emailForChat;
+var files = [];
+var chatID;
+var messages = [];
+
+if ($chatContainer.length) {
+    var tplChatMessages = underscore.template($('#tpl_chat_messages').html());
+    var tplChatFiles = underscore.template($('#tpl_chat_files').html());
+
+    $('#fileupload').fileupload({
+        url: host + urlMap.document,
+        headers: {
+            'Ag-Auth-Dev': localStorage.token
+        },
+        paramName: 'file',
+        sequentialUploads: true,
+        autoUpload: false,
+        add: function (e, data) {
+            can = true;
+            files.map(function (item) {
+                if (item.name == data.files[0].name) {
+                    can = false;
+                }
+            });
+            if (can) {
+                files.push(data.files[0]);
+                renderChatFiles();
+            }
+        },
+        done: function (e, data) {
+            files = [];
+            renderChatFiles();
+            loadMessages();
+        }
+    });
+
+    $.signedAjax({
+        url: host + urlMap.profile,
+        success: function (response) {
+            emailForChat = response.data.email;
+        },
+        error: function (result) {
+            if (result.status == 401) {
+                $('#logout').click();
+            }
+        }
+    });
+
+    loadMessages();
+
+    setInterval(function () {
+        loadMessages()
+    }, 10000);
+
+    function prepareMessagesForRender(messages) {
+        var messagesForRender = [];
+
+        var dMMMM = Intl.DateTimeFormat('en-GB', {month: 'long', day: 'numeric'});
+        var HHmm = Intl.DateTimeFormat('en-GB', {hour: 'numeric', minute: 'numeric'});
+        var dMy = Intl.DateTimeFormat('en-GB', {year: 'numeric', month: 'numeric', day: 'numeric'});
+
+        var todayDate = dMMMM.format(new Date());
+        var yesterdayDate = dMMMM.format(new Date().getDate() - 1);
+
+        var lastDate;
+        messages.map(function (item) {
+            var author;
+            if (item.by_user) {
+                author = 'Airline';
+            } else {
+                author = emailForChat;
+            }
+            var text = item.text;
+            var type = item.type;
+            var document_id = item.document_id;
+            var date = dMy.format(new Date(item.date_created));
+            var time = HHmm.format(new Date(item.date_created));
+
+
+            if (!lastDate || lastDate != date) {
+                var itemDate = dMMMM.format(new Date(item.date_created));
+                var dateTitle;
+
+                if (itemDate == todayDate) {
+                    dateTitle = 'Today'
+                } else if (itemDate == yesterdayDate) {
+                    dateTitle = 'Yesterday';
+                } else {
+                    dateTitle = itemDate;
+                }
+
+                messagesForRender.push({
+                    date: dateTitle
+                });
+
+                lastDate = date;
+            }
+
+            var object = {
+                author: author,
+                time: time,
+                text: text,
+                type: type,
+                document_id: document_id,
+            };
+
+            messagesForRender.push(object);
+        });
+
+        return messagesForRender;
+    }
+
+    /*
+    + * 1) загруза сообщений
+    + * 2) отправка сообщения без документа
+    + * 3) добавление документа в очередь
+    + * 4) отправка документов при отправке сообщения
+    * 5) обновление полученных сообщений каждые 5 секунд
+    * */
+}
+
+/******************/
+/* CHAT HANDLERS */
+/******************/
+
+$(document).on('keydown', '#textbox', function (e) {
+    if (e.keyCode == 13 && (e.ctrlKey || e.metaKey)) {
+        createMessage()
+    }
+});
+
+function loadMessages() {
+    $.signedAjax({
+        url: host + urlMap.chat,
+        success: function (response) {
+            messages = response.messages;
+            chatID = response.chat.id;
+
+            renderMessages()
+        },
+        error: function (result) {
+            if (result.status == 401) {
+                $('#logout').click();
+            }
+        }
+    });
+}
+
+function renderMessages() {
+    $chatMessagesContainer.html('');
+    var messagesForRender = prepareMessagesForRender(messages);
+
+    for (var i in messagesForRender) {
+        $chatMessagesContainer.append(tplChatMessages({message: messagesForRender[i]}));
+    }
+
+    $chatMessagesContainer[0].scrollTop = $chatMessagesContainer[0].scrollHeight;
+}
+
+function renderChatFiles() {
+    $('#fileitem-queue').html(tplChatFiles({
+        files: files
+    }))
+}
+
+function removeItemFromQueue(i) {
+    renderChatFiles();
+}
+
+function createMessage() {
+    var $textbox = $('#textbox');
+    var text = $textbox.val().trim();
+    $textbox.val('');
+    if (!text) {
+        uploadQueuedFiles();
+
+        return
+    }
+
+    var cm = {
+        chat_id: chatID,
+        text: text,
+    };
+    $.signedAjax({
+        method: 'POST',
+        url: host + urlMap.chat,
+        data: JSON.stringify(cm),
+        success: function (response) {
+            messages.push(response.chat_message);
+            renderMessages();
+        },
+        error: function (result) {
+            if (result.status == 401) {
+                $('#logout').click();
+            }
+        }
+    });
+
+    $textbox.focus();
+    uploadQueuedFiles();
+}
+
+function openDocument(id) {
+    $.signedAjax({
+        url: host + urlMap.document + id,
+        success: function (response) {
+            if (response.status == 'OK') {
+                window.open(response.meta, '_blank');
+            }
+        },
+        error: function (result) {
+            if (result.status == 401) {
+                $('#logout').click();
+            }
+        }
+    });
+}
+
+function uploadQueuedFiles() {
+    $('#fileupload').fileupload('send', {files: files});
+}
 
 /******************/
 /* OTHER HANDLERS */
@@ -874,12 +1130,12 @@ var generateMeanResponseTimeChart = function (planID, canvasID) {
             }
 
             var ctx = $("#" + canvasID).get(0).getContext("2d");
-            
+
             if (noData == true) {
                 ctx.font = '20px Lato';
                 ctx.textAlign = 'center';
                 ctx.fillText('No Available Data', 400, 100);
-            } else {                
+            } else {
                 var myNewChart = new Chart(ctx).Line(cData, chartOptions);
             }
         }
@@ -1042,6 +1298,3 @@ function reloadAgencyChart(keyId, value) {
     var ctx = $("#" + keyId + '-agency').get(0).getContext("2d");
     var myNewChart = new Chart(ctx).Line(data, chartOptions);
 }*/
-
-
-
