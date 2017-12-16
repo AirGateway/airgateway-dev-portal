@@ -51,45 +51,51 @@
     </div> {{ "<!-- /.container-main -->" | safeHTML }}
 
 
-
+    {{ with .Site.GetPage "section" "home" }}
     <div class="container">
       <footer>
-        <p>Powered by <a href="http://airgateway.net/">AirGateway</a> - The NDC Gateway Company</p>
+        <p>{{.Params.footerlegend | markdownify}}</p>
       </footer>
     </div>
+    {{end}}
 
     <script id="tpl_menu" type="text/html">
         {{ $currentURL := .URL | absLangURL }}
         {{ "<% if (localStorage.token) { %>" | safeHTML }}
             <div class="float-right dropdown">
+                {{ with .Site.GetPage "section" "home" }}
                 <a href="#" class="nav-link dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Account
+                    {{.Params.account}}
                 </a>
                 <div class= "dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="/member/dashboard/">API Dashboard</a>
-                    <a class="dropdown-item" href="/member/profile/">Edit profile</a>
+                    <a class="dropdown-item" href="/member/dashboard/">{{.Params.menuapidashboard}}</a>
+                    <a class="dropdown-item" href="/member/profile/">{{.Params.menueditprofile}}</a>
                     <div class="dropdown-divider"></div>
-                    <a id="logout" class="dropdown-item" href="#">Log out</a>
+                    <a id="logout" class="dropdown-item" href="#">{{.Params.menulogout}}</a>
                 </div>
+                {{end}}
             </div>
             {{ with .Site.GetPage "section" "apis" }}
-            {{ $permalinkURL := .URL | absLangURL }}
-            <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "api_catalogue" }}</a>
+                {{ $permalinkURL := .URL | absLangURL }}
+                <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
             {{end}}
         {{ "<% } else { %>" | safeHTML }}
             {{ with .Site.GetPage "section" "register" }}
-            {{ $permalinkURL := .URL | absLangURL }}
-            <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "register" }}</a>
+                {{ $permalinkURL := .URL | absLangURL }}
+                <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
             {{ end }}
             {{ with .Site.GetPage "section" "login" }}
-            {{ $permalinkURL := .URL | absLangURL }}
-            <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "login" }}</a>
+                {{ $permalinkURL := .URL | absLangURL }}
+                <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
             {{ end }}
         {{ "<% } %>" | safeHTML }}
-        {{ with .Site.GetPage "section" "validator" }}
-        {{ $permalinkURL := .URL | absLangURL }}
-        <a class="nav-link {{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ i18n "ndc_validator" }}</a>
-        {{ end}}
+
+
+
+        {{ range where .Data.Pages.ByWeight "Type" "pages" }}
+            {{ $permalinkURL := .URL | absLangURL }}
+            <a class="nav-link {{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
+        {{ end }}
 
     </script>
 
