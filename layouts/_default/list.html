@@ -1,6 +1,6 @@
 {{ define "main" }}
 {{ with .Site.GetPage "section" "home" }}
-<div class="jumbotron" id="home-jumbotron" style="background-image: url(/images/{{.Params.backgroundimage}});" >
+<div class="jumbotron" id="home-jumbotron" style="background-image: url({{.Params.backgroundimage}});" >
     <div class="container">
 
             <h1 id="jumbo-title"> {{.Params.jumbotitle}} </h1>
