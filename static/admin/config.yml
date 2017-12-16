@@ -80,6 +80,7 @@ collections: # A list of collections the CMS should be able to edit
       - {label: "Draft", name: "draft", widget: "boolean"}
       - {label: "Link", name: "link", widget: "string"}
       - {label: "Weight", name: "weight", widget: "number", default: 10, min: 2, max: 50}
+      - {label: "Read More button", name: "readmore", widget: "string"}
 
 
 # Does not currently work, see https://github.com/netlify/netlify-cms/issues/248
