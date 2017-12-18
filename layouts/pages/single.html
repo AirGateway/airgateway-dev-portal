@@ -7,7 +7,7 @@
 
             <h3>{{$.Params.description}}</h3>
 
-            {{ $.Params.body | markdownify}}
+            {{ $.Content | markdownify}}
 
             {{ if $.Params.link }}
               <p id="jumbo-cta">
