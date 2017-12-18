@@ -76,8 +76,13 @@
                 {{end}}
             </div>
             {{ with .Site.GetPage "section" "apis" }}
-                {{ $permalinkURL := .URL | absLangURL }}
-                <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
+            {{ $permalinkURL := .URL | absLangURL }}
+            <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
+            {{end}}
+
+            {{ with .Site.GetPage "page" "member/chat.md" }}
+            {{ $permalinkURL := .URL | absLangURL }}
+            <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }} <span class="chat-counter"></span></a>
             {{end}}
 
             {{ with .Site.GetPage "page" "member/chat.md" }}
@@ -95,14 +100,14 @@
                 <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
             {{ end }}
 
+
+            {{ range where .Site.Pages.ByWeight "Type" "pages" }}
+                {{ $permalinkURL := .URL | absLangURL }}
+                <a class="nav-link {{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
+            {{ end }}
+
         {{ "<% } %>" | safeHTML }}
 
-
-
-        {{ range where .Data.Pages.ByWeight "Type" "pages" }}
-            {{ $permalinkURL := .URL | absLangURL }}
-            <a class="nav-link {{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
-        {{ end }}
 
     </script>
 
