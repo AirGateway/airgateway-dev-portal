@@ -95,14 +95,13 @@
                 <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
             {{ end }}
 
+            {{ range where .Site.Pages.ByWeight "Type" "pages" }}
+                {{ $permalinkURL := .URL | absLangURL }}
+                <a class="nav-link {{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
+            {{ end }}
+
         {{ "<% } %>" | safeHTML }}
 
-
-
-        {{ range where .Data.Pages.ByWeight "Type" "pages" }}
-            {{ $permalinkURL := .URL | absLangURL }}
-            <a class="nav-link {{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
-        {{ end }}
 
     </script>
 
