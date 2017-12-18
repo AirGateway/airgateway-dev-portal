@@ -1,0 +1,41 @@
+{{ define "main" }}
+{{ with .Site.GetPage "section" "home" }}
+<div class="jumbotron" id="home-jumbotron" style="background-image: url({{.Params.backgroundimage}});" >
+    <div class="container">
+
+            <h1 id="jumbo-title"> {{.Params.jumbotitle}} </h1>
+            <p id="jumbo-cta">
+                <a class="btn btn-primary btn-lg" href="/apis" role="button"> {{.Params.viewapis}} </a>
+            </p>
+    </div>
+</div>
+{{ end }}
+<div class="container">
+    <div class="row">
+        {{ range where .Data.Pages.ByWeight "Type" "pages" }}
+        <div class="col-md-4">
+            <h2>{{ .Title }}</h2>
+            <p>{{ .Description }}</p>
+            <p>
+                {{ $permalinkURL := .URL | absLangURL }}
+                <a class="btn btn-default" href="{{ .URL }}" role="button">{{ .Params.readmore }}</a>
+            </p>
+        </div>
+        {{ end }}
+    </div>
+</div> {{ "<!-- /.container -->" | safeHTML }}
+<hr>
+
+<script>
+    if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", user => {
+        if (!user) {
+            window.netlifyIdentity.on("login", () => {
+            document.location.href = "/admin/";
+            });
+        }
+        });
+    }
+</script>
+
+{{ end }}

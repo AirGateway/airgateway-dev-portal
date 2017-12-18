@@ -81,8 +81,15 @@ collections: # A list of collections the CMS should be able to edit
       - {label: "Link", name: "link", widget: "string"}
       - {label: "Weight", name: "weight", widget: "number", default: 10, min: 2, max: 50}
       - {label: "Read More button", name: "readmore", widget: "string"}
-
-
-# Does not currently work, see https://github.com/netlify/netlify-cms/issues/248
-#      - {label: "Tags", name: "tags", widget: "list"}
-#      - {label: "Categories", name: "categories", widget: "list"}
+  - name: "pages"
+    label: "Pages"
+    folder: "content/pages"
+    create: true
+    slug: "{{slug}}-page"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Description", name: "description", widget: "string"}
+      - {label: "Link Text", name: "linktext", widget: "string"}
+      - {label: "Link", name: "link", widget: "string"}
+      - {label: "Read More button", name: "readmore", widget: "string"}
+      - {label: "Body", name: "body", widget: "markdown"}
