@@ -1,5 +1,5 @@
 ---
-favicon: /images/airline-mode-icon.png
+favicon: /images/balloon.svg
 favicon_width: 40
 favicon_height: 40
 menuapidashboard: API Dashboard
