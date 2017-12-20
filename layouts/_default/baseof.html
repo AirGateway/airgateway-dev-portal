@@ -8,7 +8,9 @@
       <!-- schema.org metadata differs for Nodes and Pages -->
     {{ end }}
 
-    <link rel="icon" href="/images/favicon.png">
+    {{ with .Site.GetPage "section" "home" }}
+        <link rel="icon" href="{{.favicon}}">
+    {{ end }}
     <link rel="canonical" href="{{ .Permalink }}">
 
     <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>

@@ -1,4 +1,5 @@
 ---
+favicon: /imabes/favicon.png
 menuapidashboard: API Dashboard
 menueditprofile: Edit profile
 menulogout: Log out
