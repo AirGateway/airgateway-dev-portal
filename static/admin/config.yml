@@ -18,6 +18,9 @@ collections: # A list of collections the CMS should be able to edit
     create: false
     slug: "_index"
     fields:
+      - {label: "Favicon", name: "favicon", widget: "image"}
+      - {label: "Favicon Width", name: "favicon_width", widget: "number", default: 40, min: 0, max: 200}
+      - {label: "Favicon Height", name: "favicon_height", widget: "number", default: 40, min: 0, max: 200}
       - {label: "API Dashboard Menu option", name: "menuapidashboard", widget: "string"}
       - {label: "Edit Profile Menu option", name: "menueditprofile", widget: "string"}
       - {label: "Menu log out", name: "menulogout", widget: "string"}
