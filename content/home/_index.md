@@ -1,7 +1,7 @@
 ---
-favicon: /images/favicon.png
-favicon_height: 40
+favicon: /images/airline-mode-icon.png
 favicon_width: 40
+favicon_height: 40
 menuapidashboard: API Dashboard
 menueditprofile: Edit profile
 menulogout: Log out
