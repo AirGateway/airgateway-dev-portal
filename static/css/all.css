@@ -11,7 +11,7 @@ footer {
 }
 
 a {
-    color: rgb(8, 89, 95);
+    color: #088995;
 }
 
 a:hover, a:focus, .nav-link:hover, .nav-link:focus {
@@ -27,17 +27,17 @@ a:hover, a:focus, .nav-link:hover, .nav-link:focus {
 }
 
 .form-control.error {
-    border-color: #rgb(8, 89, 95);
+    border-color: ##088995;
 }
 
 label.error {
     font-size: 0.8rem;
     font-weight: normal;
-    color: #rgb(8, 89, 95);
+    color: ##088995;
 }
 
 .nav {
-    background: #rgb(8, 89, 95);
+    background: ##088995;
 }
 
 .nav-link {
@@ -157,7 +157,7 @@ label.error {
 }
 
 .colors {
-    background-color: #rgb(8, 89, 95);
+    background-color: ##088995;
     color: #fcd100;
 }
 
@@ -193,7 +193,7 @@ hr {
     font-family: inherit;
     font-weight: 500;
     line-height: 1.1;
-    color: #rgb(8, 89, 95);
+    color: ##088995;
     margin-top: 20px;
     margin-bottom: 10px;
 }
@@ -424,26 +424,26 @@ hr {
 }
 
 .panel-danger {
-    border-color: #rgb(8, 89, 95)
+    border-color: ##088995
 }
 
 .panel-danger > .panel-heading {
     color: #fff;
-    background-color: #rgb(8, 89, 95);
-    border-color: #rgb(8, 89, 95)
+    background-color: ##088995;
+    border-color: ##088995
 }
 
 .panel-danger > .panel-heading + .panel-collapse > .panel-body {
-    border-top-color: #rgb(8, 89, 95)
+    border-top-color: ##088995
 }
 
 .panel-danger > .panel-heading .badge {
-    color: #rgb(8, 89, 95);
+    color: ##088995;
     background-color: #fff
 }
 
 .panel-danger > .panel-footer + .panel-collapse > .panel-body {
-    border-bottom-color: #rgb(8, 89, 95)
+    border-bottom-color: ##088995
 }
 
 dt, kbd kbd, label {
