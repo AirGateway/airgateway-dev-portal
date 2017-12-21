@@ -9,6 +9,6 @@ footerlegend: 'Powered by [AirGateway](https://airgateway.net) - The NDC Gateway
 account: Account
 jumbotitle: Enabling the NDC age for travel agents
 viewapis: View Our APIs »
-backgroundimage: /images/blimp-631481.jpg
+backgroundimage: /images/airplane-2745898_1920.jpg
 ---
 
