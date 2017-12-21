@@ -1,5 +1,5 @@
 ---
-favicon: /images/balloon.svg
+favicon: /images/airline-mode-icon.png
 favicon_width: 40
 favicon_height: 40
 menuapidashboard: API Dashboard
@@ -9,6 +9,6 @@ footerlegend: 'Powered by [AirGateway](https://airgateway.net) - The NDC Gateway
 account: Account
 jumbotitle: Enabling the NDC age for travel agents
 viewapis: View Our APIs »
-backgroundimage: /images/bg_plane.jpeg
+backgroundimage: /images/blimp-631481.jpg
 ---
 
