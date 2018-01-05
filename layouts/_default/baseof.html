@@ -85,9 +85,11 @@
             <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
             {{end}}
 
-            {{ range where .Site.Pages.ByWeight "Type" "pages" }}
+            {{ range where .Site.Pages "Type" "pages" }}
                 {{ $permalinkURL := .URL | absLangURL }}
-                <a class="nav-link {{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
+                {{ if isset .Params "title"  }}
+                    | <a class="nav-link {{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
+                {{ end }}
             {{ end }}
 
             {{ with .Site.GetPage "page" "member/chat.md" }}
