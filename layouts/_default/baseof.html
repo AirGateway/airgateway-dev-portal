@@ -8,7 +8,9 @@
       <!-- schema.org metadata differs for Nodes and Pages -->
     {{ end }}
 
-    <link rel="icon" href="/images/favicon.png">
+    {{ with .Site.GetPage "section" "home" }}
+        <link rel="icon" href="{{.Params.favicon}}">
+    {{ end }}
     <link rel="canonical" href="{{ .Permalink }}">
 
     <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
@@ -38,7 +40,10 @@
   <body>
     <nav class="nav fixed-top blog-nav">
         <div class="container">
-          <a class="navbar-brand" href="{{ .Site.BaseURL | absLangURL }}">{{ .Site.Title }}</a>
+            {{ with .Site.GetPage "section" "home" }}
+                <img height="{{.Params.favicon_height}}" width="{{.Params.favicon_width}}" src="{{.Params.favicon}}" />
+            {{ end }}
+            <a class="navbar-brand" href="{{ .Site.BaseURL | absLangURL }}">{{ .Site.Title }}</a>
 
 
       </div>
@@ -77,32 +82,33 @@
             </div>
             {{ with .Site.GetPage "section" "apis" }}
             {{ $permalinkURL := .URL | absLangURL }}
-            <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
+            | <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
             {{end}}
 
+            {{ range where .Site.Pages "Type" "pages" }}
+                {{ $permalinkURL := .URL | absLangURL }}
+                {{ if isset .Params "title"  }}
+                    | <a class="nav-link {{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
+                {{ end }}
+            {{ end }}
+
             {{ with .Site.GetPage "page" "member/chat.md" }}
-            {{ $permalinkURL := .URL | absLangURL }}
-            <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }} <span class="chat-counter"></span></a>
-            {{end}}
-        {{ "<% } else { %>" | safeHTML }}
+                {{ $permalinkURL := .URL | absLangURL }}
+                | <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }} <span class="chat-counter"></span></a>
+                {{end}}
+            {{ "<% } else { %>" | safeHTML }}
             {{ with .Site.GetPage "section" "register" }}
                 {{ $permalinkURL := .URL | absLangURL }}
-                <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
+                | <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
             {{ end }}
 
             {{ with .Site.GetPage "section" "login" }}
                 {{ $permalinkURL := .URL | absLangURL }}
-                <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
+                | <a class="nav-link{{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
             {{ end }}
 
         {{ "<% } %>" | safeHTML }}
 
-
-
-        {{ range where .Data.Pages.ByWeight "Type" "pages" }}
-            {{ $permalinkURL := .URL | absLangURL }}
-            <a class="nav-link {{ if eq $permalinkURL $currentURL }} active{{ end }}" href="{{ .URL }}">{{ .Params.title }}</a>
-        {{ end }}
 
     </script>
 

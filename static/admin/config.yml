@@ -1,15 +1,14 @@
 # Save changes to GitHub
 backend:
-  name: github
-  repo: AirGateway/portal
+  name: git-gateway
   branch: master
 
 # Use the Editorial workflow - https://github.com/netlify/netlify-cms/blob/master/docs/editorial_workflow.md
-publish_mode: editorial_workflow
+#publish_mode: editorial_workflow
 
 # Save image uploads to /img/uploads - https://gohugo.io/themes/creation/#static
-media_folder: "images/"
-public_folder: "images/"
+media_folder: "static/images"
+public_folder: "/images"
 
 # Collections
 collections: # A list of collections the CMS should be able to edit
@@ -19,6 +18,9 @@ collections: # A list of collections the CMS should be able to edit
     create: false
     slug: "_index"
     fields:
+      - {label: "Favicon", name: "favicon", widget: "image"}
+      - {label: "Favicon Width", name: "favicon_width", widget: "number", default: 40, min: 0, max: 200}
+      - {label: "Favicon Height", name: "favicon_height", widget: "number", default: 40, min: 0, max: 200}
       - {label: "API Dashboard Menu option", name: "menuapidashboard", widget: "string"}
       - {label: "Edit Profile Menu option", name: "menueditprofile", widget: "string"}
       - {label: "Menu log out", name: "menulogout", widget: "string"}
@@ -81,8 +83,15 @@ collections: # A list of collections the CMS should be able to edit
       - {label: "Link", name: "link", widget: "string"}
       - {label: "Weight", name: "weight", widget: "number", default: 10, min: 2, max: 50}
       - {label: "Read More button", name: "readmore", widget: "string"}
-
-
-# Does not currently work, see https://github.com/netlify/netlify-cms/issues/248
-#      - {label: "Tags", name: "tags", widget: "list"}
-#      - {label: "Categories", name: "categories", widget: "list"}
+  - name: "pages"
+    label: "Pages"
+    folder: "content/pages"
+    create: true
+    slug: "{{slug}}-page"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Description", name: "description", widget: "string"}
+      - {label: "Link Text", name: "linktext", widget: "string"}
+      - {label: "Link", name: "link", widget: "string"}
+      - {label: "Read More button", name: "readmore", widget: "string"}
+      - {label: "Body", name: "body", widget: "markdown"}
