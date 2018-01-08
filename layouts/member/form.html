@@ -1,0 +1,95 @@
+<h1>Please complete the form</h1>
+
+<div class="panel panel-primary" id="form-panel">
+
+</div>
+
+
+<script type="text/html" id="tpl_dynamic_form">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      {{ "<%- title %>" | safeHTML }}
+    </h3>
+  </div>
+  <div class="panel-body">
+    <div class="well">
+      {{ "<%- description %>" | safeHTML }}
+    </div>
+    <form id="dynamicForm" name="dynamicForm">
+      {{ "<% for (var i in elements) { %>" | safeHTML }}
+        {{ "<% var elem = elements[i]; %>" | safeHTML }}
+        {{ "<% if (elem.type == 'text') {%>" | safeHTML }}
+          <div class="form-group">
+            <label for="<%- elem.name %>">{{ "<%- elem.name %>" | safeHTML }}</label>
+            <input class="form-control"
+                   id="text_<%- elem.name %>"
+                   name="<%- elem.name %>"
+                   placeholder=""
+                   value="<%- result[elem.name] !== undefined ? result[elem.name] : ''  %>"
+                   autocomplete="off">
+          </div>
+        {{ "<% } %>" | safeHTML }}
+
+        {{ "<% if (elem.type == 'list') { %>" | safeHTML }}
+          <div class="form-group">
+            <label for="<%- elem.name %>">{{ "<%- elem.name %>" | safeHTML }}</label>
+            <select class="form-control"
+                    id="<%- elem.name %>"
+                    name="<%- elem.name %>"
+                    autocomplete="off">
+              {{ "<% for (var j in elem.values) { %>" | safeHTML }}
+                <option value="<%- elem.values[j] %>"  {{ "<%- result[elem.name] !== undefined && result[elem.name] === elem.values[j] ? 'selected' : '' %>" | safeHTMLAttr }}>
+                {{ "<%- elem.values[j] %>" | safeHTML }}
+                </option>
+              {{ "<% } %>" | safeHTML }}
+            </select>
+          </div>
+        {{ "<% } %>" | safeHTML }}
+
+        {{ "<% if (elem.type == 'checkbox') { %>" | safeHTML }}
+        <div class="form-group">
+          <label for="<%- elem.name %>">{{ "<%- elem.name %>" | safeHTML }}</label>
+          {{ "<% for (var j in elem.values) { %>" | safeHTML }}
+            <div class="checkbox">
+              <label for="<%- elem.values[j] %>">
+                <input type="checkbox"
+                       id="<%- elem.values[j] %>"
+                       name="<%- elem.name %>[]"
+                       value="<%- elem.values[j] %>"
+                       autocomplete="off"
+                       {{ "<%- result[elem.name] !== undefined && result[elem.name].indexOf(elem.values[j]) > -1 ? 'checked' : '' %>" | safeHTMLAttr }}
+                >
+                {{ "<%- elem.values[j] %>" | safeHTML }}
+              </label>
+            </div>
+          {{ "<% } %>" | safeHTML }}
+        </div>
+        {{ "<% } %>" | safeHTML }}
+
+        {{ "<% if (elem.type == 'radio') { %>" | safeHTML }}
+        <div class="form-group">
+          <label for="<%- elem.name %>">{{ "<%- elem.name %>" | safeHTML }}</label>
+          {{ "<% for (var j in elem.values) { %>" | safeHTML }}
+            <div class="radio">
+              <label for="<%- elem.values[j] %>">
+                <input type="radio"
+                       id="<%-elem.values[j] %>"
+                       name="<%- elem.name %>"
+                       value="<%- elem.values[j] %>"
+                       autocomplete="off"
+                       {{ "<%- result[elem.name] !== undefined && result[elem.name] === elem.values[j] ? 'checked' : '' %>" | safeHTMLAttr }}
+                >
+                {{ "<%- elem.values[j] %>" | safeHTML }}
+              </label>
+            </div>
+          {{ "<% } %>" | safeHTML }}
+        </div>
+        {{ "<% } %>" | safeHTML }}
+      {{ "<% } %>" | safeHTML }}
+
+      <div class="form-group">
+        <button class="btn btn-success formSubmit float-right">Submit</button>
+      </div>
+    </form>
+  </div>
+</script>
