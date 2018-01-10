@@ -29,7 +29,7 @@ if ($formContainer.length) {
                     }
 
                 }
-console.log(response.result);
+
                 $formContainer.html(tplDynamicForm({
                     title: response.data.title,
                     description: response.data.description,
