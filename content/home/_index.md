@@ -5,7 +5,7 @@ favicon_height: 40
 menuapidashboard: API Dashboard
 menueditprofile: Edit profile
 menulogout: Log out
-footerlegend: 'Powered by [AirGateway](https://airgateway.net) - The NDC Gateway Company'
+footerlegend: 'Powered by [SITA](https://airgateway.net)'
 account: Account
 jumbotitle: Airline portal for NDC devs
 viewapis: View Our APIs »
