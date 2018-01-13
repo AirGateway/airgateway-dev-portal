@@ -29,7 +29,7 @@ if ($planListingPage) {
                     id: response.data[i].id,
                     name: response.data[i].name,
                     short_description: response.data[i].short_description,
-                    activated: response.data[i].activated,
+                    status: response.data[i].status,
                 }))
             }
         },
@@ -107,6 +107,9 @@ function sendKeyRequest($form) {
         $('.ok-approved').addClass('in');
         $('.ok-approved-key').html(token);
     };
+    var showErrorAccessResult = function () {
+        $('.error-access').addClass('in');
+    };
 
     $.signedAjax({
         method: 'POST',
@@ -127,6 +130,8 @@ function sendKeyRequest($form) {
             $('#plan-form-panel').removeClass('in');
             if (response.responseJSON.status === 'ERROR_EXIST') {
                 showErrorExistResult();
+            } else if (response.responseJSON.status === 'ERROR_ACCESS') {
+                showErrorAccessResult();
             }
         }
     });

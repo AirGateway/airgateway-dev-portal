@@ -44,6 +44,16 @@
                     {{.Params.key_already_associated}}
                 </p>
             </div>
+            <div class="error-access collapse">
+                <div class="panel panel-danger">
+                    <div class="panel-body">
+                        You don't have permissions to request this plan
+                    </div>
+                </div>
+                <p>
+                    It appears when manager didn't accept you to request this plan. Please perform actions described in chat with airline to proceed further.
+                </p>
+            </div>
             <div class="ok-requested collapse">
                 <div class="panel panel-success">
                     <div class="panel-body">
@@ -76,13 +86,17 @@
         <p></p>
         <p>{{ "<%- short_description %>" | safeHTML }}</p>
         <p></p>
-        {{ "<% if (activated) { %>" | safeHTML }}
+        {{ "<% if (status == 'new') { %>" | safeHTML }}
+        <a href="/member/plan-request/<%- id %>" class="btn btn-success btn-block planRequest" data-plan="<%- id %>">
+            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; {{.Params.request_api_key}}
+        </a>
+        {{ "<% } else if (status == 'active') { %>" | safeHTML }}
         <a href="/member/invalidate-key/<%- id %>" class="btn btn-danger btn-block invalidateKey" data-plan="<%- id %>">
             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp; {{.Params.invalidate_api_key}}
         </a>
-        {{ "<% } else { %>" | safeHTML }}
-        <a href="/member/plan-request/<%- id %>" class="btn btn-success btn-block planRequest" data-plan="<%- id %>">
-            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; {{.Params.request_api_key}}
+        {{ "<% } else if (status == 'disallowed') { %>" | safeHTML }}
+        <a href="#" class="btn btn-primary btn-block disabled disallowed"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;
+            No access to request this plan
         </a>
         {{ "<% } %>" | safeHTML }}
 
