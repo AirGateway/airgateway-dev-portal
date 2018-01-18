@@ -95,6 +95,7 @@
             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp; {{.Params.invalidate_api_key}}
         </a>
         {{ "<% } else if (status == 'disallowed') { %>" | safeHTML }}
+        <p>This API needs actions to enroll, follow instructions to fulfil requirements</p>
         <a href="#" class="btn btn-primary btn-block disabled disallowed"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;
             No access to request this plan
         </a>
