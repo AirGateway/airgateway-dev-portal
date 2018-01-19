@@ -107,19 +107,4 @@
 </script>
 
 
-<script id="tpl_plan_message" type="text/html">
-    <div class="col-lg-12">
-      <div class="panel panel-danger">
-        <div class="panel-body">
-      <h4 style="margin-top: 0">Attention</h4>
-      <p>You're in step {{ "<%= current %>" | safeHTML }} out of {{ "<%= total %>" | safeHTML }}<br>
-        Please complete following actions to get more access: <br>
-      {{ "<% for(var i in actions) { %>" | safeHTML }}
-      {{ "<%= actions[i] %>" | safeHTML }}<br>
-      {{ "<% } %>" | safeHTML }}
-      </p>
-        </div>
-      </div>
-    </div>
-</script>
 {{ end }}

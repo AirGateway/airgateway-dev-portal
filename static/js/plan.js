@@ -8,7 +8,6 @@ $planMessageContainer = $('.planMessage-container');
 if ($planListingPage) {
     var keyRequestFields = [];
     var tplPlan = underscore.template($('#tpl_plan').html());
-    var tplPlanMessage = underscore.template($('#tpl_plan_message').html());
 
     $.signedAjax({
         url: host + urlMap.requestFields,
@@ -43,42 +42,6 @@ if ($planListingPage) {
         }
     });
 
-    $.signedAjax({
-        url: host + urlMap.plansMessage,
-        success: function(response) {
-            var actions = [];
-            var keys = Object.keys(response.actions);
-            var counter = 1;
-            // search for messages
-            for (var i in keys) {
-                var key = keys[i];
-                var action = response.actions[key];
-                if (action.type === 'message') {
-                    actions.push(counter +') '+ action.message)
-                    counter++;
-                }
-            }
-
-            // search for messages
-            for (var i in response.forms) {
-                var action = response.actions[response.forms[i].action_id];
-                actions.push(counter +') Please complete "<a href="/member/form/?id='+ response.forms[i].id +'">'+ action.form_title +'</a>"')
-                counter++;
-            }
-
-        console.log(actions);
-            $planMessageContainer.html(tplPlanMessage({
-                current: response.current_state_number,
-                total: response.states_count,
-                actions: actions
-            }))
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
-            }
-        }
-    })
 }
 
 $(document).on('click', '.planRequest', function (e) {

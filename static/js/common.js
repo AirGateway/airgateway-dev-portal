@@ -27,7 +27,6 @@ var urlMap = {
     graph: '',
     profile: '/portal/profile',
     plans: '/portal/plans',
-    plansMessage: '/portal/plans-message',
     requestKey: '/portal/request-key/',
     invalidateKey: '/portal/invalidate-key/',
     requestFields: '/portal/request-key-fields',
