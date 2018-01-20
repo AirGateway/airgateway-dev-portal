@@ -1,0 +1,85 @@
+<h2>Please complete steps to enroll access to requested plan</h2>
+
+<div class="row" id="onboarding-panel">
+  <div class="col-lg-12 onboarding-container"></div>
+  <div class="col-lg-12 onboarding-docs-container"></div>
+</div>
+
+
+
+<script type="text/html" id="tpl_onboarding">
+  <div class="panel panel-danger">
+    <div class="panel-body">
+      <p>You're in step {{ "<%= current %>" | safeHTML }} out of {{ "<%= total %>" | safeHTML }}<br>
+        Please complete following actions to get more access: <br>
+        {{ "<% for(var i in actions) { %>" | safeHTML }}
+        {{ "<%= actions[i] %>" | safeHTML }}<br>
+        {{ "<% } %>" | safeHTML }}
+      </p>
+      {{ "<% if (isDocumentCompleted && isFormCompleted) { %>" | safeHTML }}
+      <p><b>Manager will review your submitted data and approve you further or contact through airline chat</b></p>
+      {{ "<% } %>" | safeHTML }}
+      <div id="fileitem-queue">
+
+      </div>
+      <div class="btn btn-success" onclick="$('#fileupload').click()">Add File</div>
+      <div class="btn btn-primary uploadBtn hide" onclick="uploadQueuedFiles()">Upload</div>
+      <input style="display:none" id="fileupload" type="file" multiple/><br/>
+    </div>
+  </div>
+</script>
+
+<script id="tpl_onboarding_files" type="text/html">
+  {{ "<% if (files.length) { %>" | safeHTML }}
+  <table style="margin-top: 10px; margin-bottom: 10px" class="table">
+    <thead>
+    <tr>
+      <th>Selected files to upload:</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{ "<% for (var i in files) { %>" | safeHTML }}
+    <tr>
+      <td><strong>{{ "<%- files[i].name %>" | safeHTML }}</strong></td>
+      <td nowrap>
+        <button type="button" class="btn btn-danger btn-xs"
+                onclick="removeItemFromQueue(<%- i %>)">
+          <span class="glyphicon glyphicon-trash"></span> Remove
+        </button>
+      </td>
+    </tr>
+    {{ "<% } %>" | safeHTML }}
+    </tbody>
+  </table>
+  {{ "<% } %>" | safeHTML }}
+</script>
+
+
+<script id="tpl_onboarding_uploaded_files" type="text/html">
+  {{ "<% if (documents.length) { %>" | safeHTML }}
+  <table style="margin-top: 10px; margin-bottom: 10px" class="table">
+    <thead>
+    <tr>
+      <th colspan="2">Uploaded files</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{ "<% for (var i in documents) { %>" | safeHTML }}
+    <tr>
+      <td><strong>{{ "<%- documents[i].name %>" | safeHTML }}</strong></td>
+      <td nowrap>
+        <button type="button" class="btn btn-info btn-xs"
+                onclick="openDocument('<%- documents[i].id %>')">
+          <span class="glyphicon glyphicon-file"></span> Open
+        </button>
+        <button type="button" class="btn btn-danger btn-xs"
+                onclick="removeDocument('<%- planID %>', '<%- documents[i].id %>')">
+          <span class="glyphicon glyphicon-remove"></span> Remove
+        </button>
+      </td>
+    </tr>
+    {{ "<% } %>" | safeHTML }}
+    </tbody>
+  </table>
+  {{ "<% } %>" | safeHTML }}
+</script>

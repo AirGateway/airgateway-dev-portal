@@ -89,22 +89,19 @@
         <p>{{ "<%- short_description %>" | safeHTML }}</p>
         <p></p>
         {{ "<% if (status == 'new') { %>" | safeHTML }}
-        <a href="/member/plan-request/<%- id %>" class="btn btn-success btn-block planRequest" data-plan="<%- id %>">
+        <a href="#" class="btn btn-success btn-block planRequest" data-plan="<%- id %>">
             <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; {{.Params.request_api_key}}
         </a>
         {{ "<% } else if (status == 'active') { %>" | safeHTML }}
-        <a href="/member/invalidate-key/<%- id %>" class="btn btn-danger btn-block invalidateKey" data-plan="<%- id %>">
+        <a href="#" class="btn btn-danger btn-block invalidateKey" data-plan="<%- id %>">
             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp; {{.Params.invalidate_api_key}}
         </a>
         {{ "<% } else if (status == 'disallowed') { %>" | safeHTML }}
-        <p>This API needs actions to enroll, follow instructions to fulfil requirements</p>
-        <a href="#" class="btn btn-primary btn-block disabled disallowed"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;
-            No access to request this plan
+        <a href="/member/onboarding?id=<%- id %>" class="btn btn-success btn-block disallowed">
+            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; {{.Params.request_api_key}}
         </a>
         {{ "<% } %>" | safeHTML }}
-
     </div>
 </script>
-
 
 {{ end }}

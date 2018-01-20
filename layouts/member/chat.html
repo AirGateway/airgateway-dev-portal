@@ -17,13 +17,10 @@
                 class="form-control"
                 placeholder="Type your message here..."
             ></textarea>
-            <div id="fileitem-queue">
-
-            </div>
           </div>
           <div class="col-lg-4">
             <div class="btn btn-primary" style="margin-right: 10px" onclick="createMessage()">Send Message</div>
-            <div class="btn btn-primary" onclick="$('#fileupload').click()">Add File</div>
+
             <input style="display:none" id="fileupload" type="file" multiple/><br/>
           </div>
         </div>
@@ -92,3 +89,4 @@
   </table>
   {{ "<% } %>" | safeHTML }}
 </script>
+

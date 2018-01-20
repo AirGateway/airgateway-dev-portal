@@ -27,6 +27,7 @@ var urlMap = {
     graph: '',
     profile: '/portal/profile',
     plans: '/portal/plans',
+    planOnboardingInfo: '/portal/plan-onboarding-info',
     requestKey: '/portal/request-key/',
     invalidateKey: '/portal/invalidate-key/',
     requestFields: '/portal/request-key-fields',
@@ -101,6 +102,21 @@ function showFormSuccess() {
 }
 
 
+function openDocument(id) {
+    $.signedAjax({
+        url: host + urlMap.document + id,
+        success: function (response) {
+            if (response.status == 'OK') {
+                window.open(response.meta, '_blank');
+            }
+        },
+        error: function (result) {
+            if (result.status == 401) {
+                $('#logout').click();
+            }
+        }
+    });
+}
 
 /******************/
 /* OTHER HANDLERS */

@@ -6,12 +6,25 @@ $formContainer = $('#form-panel');
 
 if ($formContainer.length) {
     var tplDynamicForm = underscore.template($('#tpl_dynamic_form').html());
-    var pocket = location.search.substr(1).split('=');
+    var pocket = location.search.substr(1).split('&');
     var id = '';
-    if (pocket[0] === 'id') {
-        id = pocket[1];
+    var planID = '';
+    for (var i in pocket) {
+        var innerPocket = pocket[i].split('=')
+        if (innerPocket[0] === 'id') {
+            id = innerPocket[1];
+        }
+
+        if (innerPocket[0] === 'planID') {
+            planID = innerPocket[1];
+        }
     }
+
     if (!id) {
+        location.href = '/';
+    }
+
+    if (!planID) {
         location.href = '/';
     }
 
@@ -57,7 +70,7 @@ if ($formContainer.length) {
             data: $('#dynamicForm').serialize(),
             success: function (response) {
                 if (response.status == 'OK') {
-                    location.href = '/member/chat/';
+                    location.href = '/member/onboarding/?id=' + planID;
                 }
             },
             error: function (result) {

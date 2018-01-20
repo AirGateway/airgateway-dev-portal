@@ -158,23 +158,27 @@ function renderMessages() {
 
     $chatMessagesContainer[0].scrollTop = $chatMessagesContainer[0].scrollHeight;
 }
+/*
 
 function renderChatFiles() {
     $('#fileitem-queue').html(tplChatFiles({
         files: files
     }))
 }
+*/
 
+/*
 function removeItemFromQueue(i) {
     renderChatFiles();
 }
+*/
 
 function createMessage() {
     var $textbox = $('#textbox');
     var text = $textbox.val().trim();
     $textbox.val('');
     if (!text) {
-        uploadQueuedFiles();
+        //uploadQueuedFiles();
 
         return
     }
@@ -199,25 +203,10 @@ function createMessage() {
     });
 
     $textbox.focus();
-    uploadQueuedFiles();
+    //uploadQueuedFiles();
 }
 
-function openDocument(id) {
-    $.signedAjax({
-        url: host + urlMap.document + id,
-        success: function (response) {
-            if (response.status == 'OK') {
-                window.open(response.meta, '_blank');
-            }
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
-            }
-        }
-    });
-}
-
+/*
 function uploadQueuedFiles() {
     $('#fileupload').fileupload('send', {files: files});
-}
+}*/
