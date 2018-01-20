@@ -19,6 +19,7 @@ if ($onboardingPanel.length) {
     if (!id) {
         location.href = '/';
     }
+    var isDocumentNeeded = false;
 
     $.signedAjax({
         url: host + urlMap.planOnboardingInfo + '/' + id,
@@ -53,6 +54,7 @@ if ($onboardingPanel.length) {
                 var key = keys[i];
                 var action = response.actions[key];
                 if (action.type === 'document') {
+                    isDocumentNeeded = true;
                     actions.push(counter + ') Upload document: ' + action.message);
                     counter++;
                 }
@@ -65,7 +67,8 @@ if ($onboardingPanel.length) {
                 total: response.total_state_number,
                 actions: actions,
                 isDocumentCompleted: isDocumentCompleted,
-                isFormCompleted: isFormCompleted
+                isFormCompleted: isFormCompleted,
+                isDocumentNeeded: isDocumentNeeded,
             }));
 
             $('#fileupload').fileupload({
@@ -110,7 +113,8 @@ if ($onboardingPanel.length) {
             success: function (response) {
                 $onboardingDocsContainer.html(tplOnboardingUploadedDocuments({
                     planID: id,
-                    documents: response
+                    documents: response,
+                    isDocumentNeeded: isDocumentNeeded,
                 }));
             },
             error: function (result) {

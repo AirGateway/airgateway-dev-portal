@@ -16,15 +16,18 @@
         {{ "<%= actions[i] %>" | safeHTML }}<br>
         {{ "<% } %>" | safeHTML }}
       </p>
-      {{ "<% if (isDocumentCompleted && isFormCompleted) { %>" | safeHTML }}
-      <p><b>Manager will review your submitted data and approve you further or contact through airline chat</b></p>
-      {{ "<% } %>" | safeHTML }}
-      <div id="fileitem-queue">
 
-      </div>
-      <div class="btn btn-success" onclick="$('#fileupload').click()">Add File</div>
-      <div class="btn btn-primary uploadBtn hide" onclick="uploadQueuedFiles()">Upload</div>
-      <input style="display:none" id="fileupload" type="file" multiple/><br/>
+      {{ "<% if (isDocumentNeeded) { %>" | safeHTML }}
+        {{ "<% if (isDocumentCompleted && isFormCompleted) { %>" | safeHTML }}
+          <p><b>Manager will review your submitted data and approve you further or contact through airline chat</b></p>
+        {{ "<% } %>" | safeHTML }}
+        <div id="fileitem-queue">
+
+        </div>
+        <div class="btn btn-success" onclick="$('#fileupload').click()">Add File</div>
+        <div class="btn btn-primary uploadBtn hide" onclick="uploadQueuedFiles()">Upload</div>
+        <input style="display:none" id="fileupload" type="file" multiple/><br/>
+      {{ "<% } %>" | safeHTML }}
     </div>
   </div>
 </script>
@@ -56,7 +59,7 @@
 
 
 <script id="tpl_onboarding_uploaded_files" type="text/html">
-  {{ "<% if (documents.length) { %>" | safeHTML }}
+  {{ "<% if (documents.length && isDocumentNeeded) { %>" | safeHTML }}
   <table style="margin-top: 10px; margin-bottom: 10px" class="table">
     <thead>
     <tr>
