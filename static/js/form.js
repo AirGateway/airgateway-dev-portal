@@ -63,11 +63,15 @@ if ($formContainer.length) {
 
     $(document).on('click', '.formSubmit', function (e) {
         e.preventDefault();
+        var form = $('#dynamicForm');
+        if (!form.valid()) {
+            return
+        }
 
         $.signedAjax({
             url: host + urlMap.form + "/" + id,
             method: "POST",
-            data: $('#dynamicForm').serialize(),
+            data: form.serialize(),
             success: function (response) {
                 if (response.status == 'OK') {
                     location.href = '/member/onboarding/?id=' + planID;

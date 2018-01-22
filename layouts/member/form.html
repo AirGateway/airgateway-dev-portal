@@ -26,6 +26,7 @@
                    name="<%- elem.name %>"
                    placeholder=""
                    value="<%- result[elem.name] !== undefined ? result[elem.name] : ''  %>"
+                   {{ "<%- elem.is_required ? 'required' : '' %>" | safeHTMLAttr }}
                    autocomplete="off">
           </div>
         {{ "<% } %>" | safeHTML }}
@@ -36,10 +37,11 @@
             <select class="form-control"
                     id="<%- elem.name %>"
                     name="<%- elem.name %>"
+                    {{ "<%- elem.is_required ? 'required' : '' %>" | safeHTMLAttr }}
                     autocomplete="off">
               {{ "<% for (var j in elem.values) { %>" | safeHTML }}
                 <option value="<%- elem.values[j] %>"  {{ "<%- result[elem.name] !== undefined && result[elem.name] === elem.values[j] ? 'selected' : '' %>" | safeHTMLAttr }}>
-                {{ "<%- elem.values[j] %>" | safeHTML }}
+                  {{ "<%- elem.values[j] %>" | safeHTML }}
                 </option>
               {{ "<% } %>" | safeHTML }}
             </select>
@@ -57,7 +59,8 @@
                        name="<%- elem.name %>[]"
                        value="<%- elem.values[j] %>"
                        autocomplete="off"
-                       {{ "<%- result[elem.name] !== undefined && result[elem.name].indexOf(elem.values[j]) > -1 ? 'checked' : '' %>" | safeHTMLAttr }}
+                       {{ "<%- elem.is_required ? 'required' : '' %>" | safeHTMLAttr }}
+                {{ "<%- result[elem.name] !== undefined && result[elem.name].indexOf(elem.values[j]) > -1 ? 'checked' : '' %>" | safeHTMLAttr }}
                 >
                 {{ "<%- elem.values[j] %>" | safeHTML }}
               </label>
@@ -77,6 +80,7 @@
                        name="<%- elem.name %>"
                        value="<%- elem.values[j] %>"
                        autocomplete="off"
+                       {{ "<%- elem.is_required ? 'required' : '' %>" | safeHTMLAttr }}
                        {{ "<%- result[elem.name] !== undefined && result[elem.name] === elem.values[j] ? 'checked' : '' %>" | safeHTMLAttr }}
                 >
                 {{ "<%- elem.values[j] %>" | safeHTML }}
