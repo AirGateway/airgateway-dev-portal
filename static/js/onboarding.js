@@ -36,18 +36,12 @@ if ($onboardingPanel.length) {
                     counter++;
                 }
             }
-            var isFormCompleted = false;
-            var isDocumentCompleted = false;
 
             // search for forms
             for (var i in response.forms) {
                 var action = response.actions[response.forms[i].action_id];
                 actions.push(counter + ') Please complete "<a href="/member/form/?id=' + response.forms[i].id + '&planID='+ id +'">' + action.form_title + '</a>" form' + (response.forms[i].status ? ' (done)' : ''));
                 counter++;
-
-                if (!isFormCompleted && response.forms[i].status) {
-                    isFormCompleted = true
-                }
             }
 
             for (var i in keys) {
@@ -58,16 +52,11 @@ if ($onboardingPanel.length) {
                     actions.push(counter + ') Upload document: ' + action.message);
                     counter++;
                 }
-                if (!isDocumentCompleted && response.document_count) {
-                    isDocumentCompleted = true
-                }
             }
             $onboardingContainer.html(tplOnboarding({
                 current: response.current_state_number,
                 total: response.total_state_number,
                 actions: actions,
-                isDocumentCompleted: isDocumentCompleted,
-                isFormCompleted: isFormCompleted,
                 isDocumentNeeded: isDocumentNeeded,
             }));
 
@@ -114,7 +103,7 @@ if ($onboardingPanel.length) {
                 $onboardingDocsContainer.html(tplOnboardingUploadedDocuments({
                     planID: id,
                     documents: response,
-                    isDocumentNeeded: isDocumentNeeded,
+                    isDocumentNeeded: isDocumentNeeded
                 }));
             },
             error: function (result) {
@@ -163,7 +152,25 @@ if ($onboardingPanel.length) {
 
     function uploadQueuedFiles() {
         $('#fileupload').fileupload('send', {files: onboardingFiles});
-        }
+    }
+
+
+    function submitOnboarding() {
+        $.signedAjax({
+            method: 'POST',
+            url: host + urlMap.planOnboardingSubmit + '/' + id ,
+            success: function (response) {
+                if (response.status == 'OK') {
+                    $('.resultMessage').removeClass("hide")
+                }
+            },
+            error: function (result) {
+                if (result.status == 401) {
+                    $('#logout').click();
+                }
+            }
+        });
+    }
 }
 
 

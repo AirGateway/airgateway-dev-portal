@@ -28,6 +28,7 @@ var urlMap = {
     profile: '/portal/profile',
     plans: '/portal/plans',
     planOnboardingInfo: '/portal/plan-onboarding-info',
+    planOnboardingSubmit: '/portal/plan-onboarding-submit',
     requestKey: '/portal/request-key/',
     invalidateKey: '/portal/invalidate-key/',
     requestFields: '/portal/request-key-fields',
