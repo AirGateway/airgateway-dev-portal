@@ -98,7 +98,7 @@
         </a>
         {{ "<% } else if (status == 'disallowed') { %>" | safeHTML }}
         <a href="/member/onboarding?id=<%- id %>" class="btn btn-success btn-block disallowed">
-            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; {{.Params.request_api_key}}
+            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; {{.Params.need_enroll_for_api_key}}
         </a>
         {{ "<% } %>" | safeHTML }}
     </div>

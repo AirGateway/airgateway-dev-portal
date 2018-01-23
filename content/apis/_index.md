@@ -3,6 +3,7 @@ css: all.js
 title: API Catalogue
 invalidate_api_key: Invalidate an API key
 request_api_key: Request an API key
+need_enroll_for_api_key: Enroll for API key
 successfully_invalidated: API Key successfully invalidated. Please refresh a page if you want to request key again.
 successfully_requested: API Key successfully requested. Please ensure you saved a key.
 your_api_key: Your API Key
