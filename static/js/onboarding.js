@@ -40,8 +40,10 @@ if ($onboardingPanel.length) {
             // search for forms
             for (var i in response.forms) {
                 var action = response.actions[response.forms[i].action_id];
-                actions.push(counter + ') Please complete "<a href="/member/form/?id=' + response.forms[i].id + '&planID='+ id +'">' + action.form_title + '</a>" form' + (response.forms[i].status ? ' (done)' : ''));
-                counter++;
+                if (action) {
+                    actions.push(counter + ') Please complete "<a href="/member/form/?id=' + response.forms[i].id + '&planID='+ id +'">' + action.form_title + '</a>" form' + (response.forms[i].status ? ' (done)' : ''));
+                    counter++;
+                }
             }
 
             for (var i in keys) {
@@ -58,6 +60,7 @@ if ($onboardingPanel.length) {
                 total: response.total_state_number,
                 actions: actions,
                 isDocumentNeeded: isDocumentNeeded,
+                documents: response.documents,
             }));
 
             $('#fileupload').fileupload({
@@ -162,6 +165,23 @@ if ($onboardingPanel.length) {
             success: function (response) {
                 if (response.status == 'OK') {
                     $('.resultMessage').removeClass("hide")
+                }
+            },
+            error: function (result) {
+                if (result.status == 401) {
+                    $('#logout').click();
+                }
+            }
+        });
+    }
+
+
+    function openDocumentFromPlan(documentID) {
+        $.signedAjax({
+            url: host + urlMap.document + documentID + '/plan/' + id,
+            success: function (response) {
+                if (response.status == 'OK') {
+                    window.open(response.meta, '_blank');
                 }
             },
             error: function (result) {

@@ -22,6 +22,14 @@
         {{ "<%= actions[i] %>" | safeHTML }}<br>
         {{ "<% } %>" | safeHTML }}
       </p>
+      {{ "<% if (documents.length) { %>" | safeHTML }}
+        <p>Documents for download: </p>
+        <ul>
+          {{ "<% for(var j in documents) { %>" | safeHTML }}
+          <li><a href="#" onclick="openDocumentFromPlan('<%= documents[j].id %>')"> {{ "<%= documents[j].name %>" | safeHTML }}</a></li>
+          {{ "<% } %>" | safeHTML }}
+        </ul>
+      {{ "<% } %>" | safeHTML }}
 
       {{ "<% if (isDocumentNeeded) { %>" | safeHTML }}
         <div id="fileitem-queue">
