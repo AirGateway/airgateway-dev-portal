@@ -64,7 +64,7 @@ if ($onboardingPanel.length) {
             }));
 
             $('#fileupload').fileupload({
-                url: host + urlMap.document + id,
+                url: host + urlMap.document + 'plan/' + id,
                 headers: {
                     'Ag-Auth-Dev': localStorage.token
                 },
@@ -101,7 +101,7 @@ if ($onboardingPanel.length) {
 
     function loadDocumentList() {
         $.signedAjax({
-            url: host + urlMap.document + 'p/' + id,
+            url: host + urlMap.document + 'plan/' + id,
             success: function (response) {
                 $onboardingDocsContainer.html(tplOnboardingUploadedDocuments({
                     planID: id,
@@ -137,7 +137,7 @@ if ($onboardingPanel.length) {
     function removeDocument(planID, id) {
         $.signedAjax({
             method: 'DELETE',
-            url: host + urlMap.document + 'p/' + planID + '/' + id ,
+            url: host + urlMap.document + id + '/plan/' + planID,
             success: function (response) {
                 if (response.status == 'OK') {
                     loadDocumentList()
@@ -165,23 +165,6 @@ if ($onboardingPanel.length) {
             success: function (response) {
                 if (response.status == 'OK') {
                     $('.resultMessage').removeClass("hide")
-                }
-            },
-            error: function (result) {
-                if (result.status == 401) {
-                    $('#logout').click();
-                }
-            }
-        });
-    }
-
-
-    function openDocumentFromPlan(documentID) {
-        $.signedAjax({
-            url: host + urlMap.document + documentID + '/plan/' + id,
-            success: function (response) {
-                if (response.status == 'OK') {
-                    window.open(response.meta, '_blank');
                 }
             },
             error: function (result) {

@@ -26,7 +26,7 @@
         <p>Documents for download: </p>
         <ul>
           {{ "<% for(var j in documents) { %>" | safeHTML }}
-          <li><a href="#" onclick="openDocumentFromPlan('<%= documents[j].id %>')"> {{ "<%= documents[j].name %>" | safeHTML }}</a></li>
+          <li><a href="#" onclick="openDocument('<%= documents[j].id %>')"> {{ "<%= documents[j].name %>" | safeHTML }}</a></li>
           {{ "<% } %>" | safeHTML }}
         </ul>
       {{ "<% } %>" | safeHTML }}
