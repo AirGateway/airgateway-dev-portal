@@ -45,7 +45,6 @@ if ($onboardingPanel.length) {
                     counter++;
                 }
             }
-
             for (var i in keys) {
                 var key = keys[i];
                 var action = response.actions[key];
@@ -56,12 +55,15 @@ if ($onboardingPanel.length) {
                 }
             }
             $onboardingContainer.html(tplOnboarding({
+                states: response.states,
                 current: response.current_state_number,
                 total: response.total_state_number,
                 actions: actions,
                 isDocumentNeeded: isDocumentNeeded,
                 documents: response.documents,
             }));
+
+            $('.bs-wizard-wrap').scrollLeft(100 * (response.current_state_number-1));
 
             $('#fileupload').fileupload({
                 url: host + urlMap.document + 'plan/' + id,

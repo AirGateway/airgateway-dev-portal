@@ -16,7 +16,24 @@
 <script type="text/html" id="tpl_onboarding">
   <div class="panel panel-danger">
     <div class="panel-body">
-      <p>You're in step {{ "<%= current %>" | safeHTML }} out of {{ "<%= total %>" | safeHTML }}<br>
+      {{ "<% if (states.length) { %>" | safeHTML }}
+      <div class="bs-wizard-wrap form-group">
+        <div class="bs-wizard" style="border-bottom:0;">
+          {{ "<% for (var i in states) { %>" | safeHTML }}
+            <div class="bs-wizard-step <%- current-1 > i ? 'complete' : '' %> <%- current-1 == i ? 'active' : '' %> <%- current-1 < i ? 'disabled' : '' %>">
+              <div class="text-center bs-wizard-stepnum">{{ "<%= states[i] %>" | safeHTML }}</div>
+              <div class="progress">
+                <div class="progress-bar"></div>
+              </div>
+              <a class="bs-wizard-dot" href="#"></a>
+            </div>
+          {{ "<% } %>" | safeHTML }}
+        </div>
+      </div>
+      {{ "<% } %>" | safeHTML }}
+
+
+      <p><b>You're in step {{ "<%= current %>" | safeHTML }} out of {{ "<%= total %>" | safeHTML }}</b><br>
         Please complete following actions to get more access: <br>
         {{ "<% for(var i in actions) { %>" | safeHTML }}
         {{ "<%= actions[i] %>" | safeHTML }}<br>
