@@ -32,7 +32,7 @@ if ($dashboardContainer.length) {
         if (plans.length) {
             $dashboardContainer.prepend(tplDashboardPlanSelect({
                 plans: plans
-            }))
+            }));
 
             showPlan(plans[0].id);
         }
