@@ -8,4 +8,4 @@
   for = "/*"
   [headers.values]
     Ag-Auth-Dev = "*"
-    X-Frame-Options = DENY
+    X-Frame-Options = "DENY"
