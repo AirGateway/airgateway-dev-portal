@@ -51,7 +51,8 @@ if ($dashboardContainer.length) {
                     quota_max: plans[i].quota_max,
                     quota_renewal_rate: plans[i].quota_renewal_rate,
                     url: plans[i].url,
-                    auth_header: plans[i].auth_header
+                    auth_header: plans[i].auth_header,
+                    key: plans[i].key
                 }));
 
 
