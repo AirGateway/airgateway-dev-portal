@@ -54,6 +54,9 @@ if ($onboardingPanel.length) {
                     counter++;
                 }
             }
+
+            var userApproved = (response.current_state_number == response.total_state_number)
+
             $onboardingContainer.html(tplOnboarding({
                 states: response.states,
                 current: response.current_state_number,
@@ -61,6 +64,7 @@ if ($onboardingPanel.length) {
                 actions: actions,
                 isDocumentNeeded: isDocumentNeeded,
                 documents: response.documents,
+                userApproved: userApproved
             }));
 
             $('.bs-wizard-wrap').scrollLeft(100 * (response.current_state_number-1));
@@ -93,6 +97,11 @@ if ($onboardingPanel.length) {
             });
 
             loadDocumentList();
+
+            if (userApproved) {
+                $('.submitDataBtn').addClass('hide');
+                $('.goToAPIBtn').removeClass('hide');
+            }
         }
     });
 
