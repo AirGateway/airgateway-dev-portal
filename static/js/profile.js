@@ -27,11 +27,6 @@ $profileForm.submit(function (e) {
                 } else {
                     showFormSuccess();
                 }
-            },
-            error: function (result) {
-                if (result.status == 401) {
-                    $('#logout').click();
-                }
             }
         });
     }
@@ -54,11 +49,6 @@ if ($profileForm.length) {
                         value: response.data.fields[i]
                     }));
                 }
-            }
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
             }
         }
     });

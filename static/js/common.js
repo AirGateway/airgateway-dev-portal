@@ -16,6 +16,16 @@ $.signedAjax = function (data) {
     data = data || {};
     data.headers = data.headers || {};
     data.headers['Ag-Auth-Dev'] = localStorage.token;
+    data.error = data.error || function (result) {
+        if (result.status === 401) {
+            var $logout  = $('#logout');
+            if($logout.length) {
+                $logout.click();
+            }  else {
+                location.href = '/';
+            }
+        }
+    };
 
     $.ajax(data);
 };
@@ -109,11 +119,6 @@ function openDocument(id) {
         success: function (response) {
             if (response.status == 'OK') {
                 window.open(response.meta, '_blank');
-            }
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
             }
         }
     });
@@ -340,11 +345,6 @@ var generateChartForKey = function (planID, canvasID, showRequests) {
                 var ctx = $("#" + canvasID).get(0).getContext("2d");
                 var myNewChart = new Chart(ctx).Line(cData, chartOptions);
             }
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
-            }
         }
     });
 };
@@ -454,11 +454,6 @@ var generatePieChartForKey = function (planID, canvasID) {
 
                 var ctx = $("#" + canvasID).get(0).getContext("2d");
                 var pieChart = new Chart(ctx).Doughnut(pieData);
-            }
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
             }
         }
     })

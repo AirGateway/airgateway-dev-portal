@@ -93,11 +93,6 @@ if ($onboardingPanel.length) {
             });
 
             loadDocumentList();
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
-            }
         }
     });
 
@@ -110,11 +105,6 @@ if ($onboardingPanel.length) {
                     documents: response,
                     isDocumentNeeded: isDocumentNeeded
                 }));
-            },
-            error: function (result) {
-                if (result.status == 401) {
-                    $('#logout').click();
-                }
             }
         })
     }
@@ -145,11 +135,6 @@ if ($onboardingPanel.length) {
                     loadDocumentList()
 
                 }
-            },
-            error: function (result) {
-                if (result.status == 401) {
-                    $('#logout').click();
-                }
             }
         });
 
@@ -167,11 +152,6 @@ if ($onboardingPanel.length) {
             success: function (response) {
                 if (response.status == 'OK') {
                     $('.resultMessage').removeClass("hide")
-                }
-            },
-            error: function (result) {
-                if (result.status == 401) {
-                    $('#logout').click();
                 }
             }
         });

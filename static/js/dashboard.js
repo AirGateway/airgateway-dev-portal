@@ -20,11 +20,6 @@ if ($dashboardContainer.length) {
             }
 
             renderPlanSelect();
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
-            }
         }
     });
 

@@ -15,11 +15,6 @@ if ($planListingPage) {
             if (response.status === 'OK') {
                 keyRequestFields = response.fields;
             }
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
-            }
         }
     });
 
@@ -33,11 +28,6 @@ if ($planListingPage) {
                     short_description: response.data[i].short_description,
                     status: response.data[i].status,
                 }))
-            }
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
             }
         }
     });
@@ -83,11 +73,6 @@ $(document).on('click', '.invalidateKey', function (e) {
                 $('#plan-result').addClass('in');
                 $('#plan-panel').removeClass('in');
                 $('.ok-invalidated').addClass('in');
-            }
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
             }
         }
     });
@@ -135,6 +120,8 @@ function sendKeyRequest($form) {
                 showErrorExistResult();
             } else if (response.responseJSON.status === 'ERROR_ACCESS') {
                 showErrorAccessResult();
+            } else if (response.status === 401) {
+                $('#logout').click();
             }
         }
     });

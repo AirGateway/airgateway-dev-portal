@@ -47,11 +47,6 @@ if ($chatContainer.length) {
         url: host + urlMap.profile,
         success: function (response) {
             emailForChat = response.data.email;
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
-            }
         }
     });
 
@@ -139,11 +134,6 @@ function loadMessages() {
             chatID = response.chat.id;
 
             renderMessages()
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
-            }
         }
     });
 }
@@ -194,11 +184,6 @@ function createMessage() {
         success: function (response) {
             messages.push(response.chat_message);
             renderMessages();
-        },
-        error: function (result) {
-            if (result.status == 401) {
-                $('#logout').click();
-            }
         }
     });
 
