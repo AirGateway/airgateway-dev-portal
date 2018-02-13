@@ -88,6 +88,22 @@
         <p></p>
         <p>{{ "<%- short_description %>" | safeHTML }}</p>
         <div>{{ "<%= long_description %>" | safeHTML }}</div>
+        {{ "<% if (key != '') { %>" | safeHTML }}
+        <div>
+            <h3>How To Use</h3>
+            <strong>Plan Settings:</strong>
+            <ul>
+                <li><strong>URL</strong>: {{ "<%- url %>" | safeHTML }} </li>
+                <li><strong>Auth Header</strong>: {{ "<%- auth_header %>" | safeHTML }} </li>
+                <li><strong>API Key</strong>: {{ "<%- key %>" | safeHTML }} </li>
+            </ul>
+            <strong>Key Allowances:</strong>
+            <ul>
+                <li><strong>Rate limit:</strong> {{ "<%- rate  %>" | safeHTML }} requests per {{ "<%- per %>" | safeHTML }} second</li>
+                <li><strong>Quota</strong>: {{ "<%- quota_max %>" | safeHTML }} requests renews every {{ "<%- quota_renewal_rate %>" | safeHTML }} seconds</li>
+            </ul>
+        </div>
+        {{ "<% } %>" | safeHTML }}
         <p></p>
         {{ "<% if (status == 'new') { %>" | safeHTML }}
         <a href="#" class="btn btn-success btn-block planRequest" data-plan="<%- id %>">

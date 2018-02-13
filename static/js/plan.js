@@ -28,6 +28,13 @@ if ($planListingPage) {
                     short_description: response.data[i].short_description,
                     long_description: response.data[i].long_description,
                     status: response.data[i].status,
+                    url: response.data[i].url,
+                    auth_header: response.data[i].auth_header,
+                    key: response.data[i].key,
+                    rate: response.data[i].rate,
+                    per: response.data[i].per,
+                    quota_max: response.data[i].quota_max,
+                    quota_renewal_rate: response.data[i].quota_renewal_rate,
                 }))
             }
         }
