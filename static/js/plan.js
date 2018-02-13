@@ -26,6 +26,7 @@ if ($planListingPage) {
                     id: response.data[i].id,
                     name: response.data[i].name,
                     short_description: response.data[i].short_description,
+                    long_description: response.data[i].long_description,
                     status: response.data[i].status,
                 }))
             }

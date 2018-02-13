@@ -87,6 +87,7 @@
         <h2>{{ "<%- name %>" | safeHTML }}</h2>
         <p></p>
         <p>{{ "<%- short_description %>" | safeHTML }}</p>
+        <div>{{ "<%= long_description %>" | safeHTML }}</div>
         <p></p>
         {{ "<% if (status == 'new') { %>" | safeHTML }}
         <a href="#" class="btn btn-success btn-block planRequest" data-plan="<%- id %>">
