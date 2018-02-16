@@ -83,24 +83,50 @@
 </div>
 
 <script id="tpl_plan" type="text/html">
-    <div class="col-md-4">
-        <h2>{{ "<%- name %>" | safeHTML }}</h2>
-        <p></p>
-        <p>{{ "<%- short_description %>" | safeHTML }}</p>
-        <p></p>
-        {{ "<% if (status == 'new') { %>" | safeHTML }}
-        <a href="#" class="btn btn-success btn-block planRequest" data-plan="<%- id %>">
-            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; {{.Params.request_api_key}}
-        </a>
-        {{ "<% } else if (status == 'active') { %>" | safeHTML }}
-        <a href="#" class="btn btn-danger btn-block invalidateKey" data-plan="<%- id %>">
-            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp; {{.Params.invalidate_api_key}}
-        </a>
-        {{ "<% } else if (status == 'disallowed') { %>" | safeHTML }}
-        <a href="/member/onboarding?id=<%- id %>" class="btn btn-success btn-block disallowed">
-            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; {{.Params.need_enroll_for_api_key}}
-        </a>
-        {{ "<% } %>" | safeHTML }}
+    <div class="col-md-9 col-md-offset-1 border-catalogue mb-4">
+        <div class="col-md-12">
+            <h2 class="h3">{{ "<%- name %>" | safeHTML }}</h2>
+            <p></p>
+            <p>{{ "<%- short_description %>" | safeHTML }}</p>
+            <div>{{ "<%= long_description %>" | safeHTML }}</div>
+        </div>
+        {{ "<% if (key != '') { %>" | safeHTML }}
+        <div class="float-left col-md-12">
+            <h3 class="h4 text-muted mt-1">Authorized Plan Details</h3>
+            <div class="float-left col-md-6">
+                <strong>Plan Settings:</strong>
+                <ul>
+                    <li><strong>URL</strong>: {{ "<%- url %>" | safeHTML }} </li>
+                    <li><strong>Auth Header</strong>: {{ "<%- auth_header %>" | safeHTML }} </li>
+                    <li><strong>API Key</strong>: {{ "<%- key %>" | safeHTML }} </li>
+                </ul>
+            </div>
+            <div class="float-left col-md-6">
+                <strong>Key Allowances:</strong>
+                <ul>
+                    <li><strong>Rate limit:</strong> {{ "<%- rate  %>" | safeHTML }} requests per {{ "<%- per %>" | safeHTML }} second</li>
+                    <li><strong>Quota</strong>: {{ "<%- quota_max %>" | safeHTML }} requests renews every {{ "<%- quota_renewal_rate %>" | safeHTML }} seconds</li>
+                </ul>
+            </div>
+            {{ "<% } %>" | safeHTML }}
+            <p class="clearfix"></p>
+
+            <div class="mt-2 mb-4 float-left col-md-6 col-md-offset-3">
+                {{ "<% if (status == 'new') { %>" | safeHTML }}
+                <a href="#" class="btn btn-success btn-block planRequest" data-plan="<%- id %>">
+                    <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; {{.Params.request_api_key}}
+                </a>
+                {{ "<% } else if (status == 'active') { %>" | safeHTML }}
+                <a href="#" class="btn btn-danger btn-block invalidateKey" data-plan="<%- id %>">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp; {{.Params.invalidate_api_key}}
+                </a>
+                {{ "<% } else if (status == 'disallowed') { %>" | safeHTML }}
+                <a href="/member/onboarding?id=<%- id %>" class="btn btn-success btn-block disallowed">
+                    <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>&nbsp; {{.Params.need_enroll_for_api_key}}
+                </a>
+                {{ "<% } %>" | safeHTML }}
+            </div>
+        </div>
     </div>
 </script>
 

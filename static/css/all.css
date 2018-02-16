@@ -522,6 +522,10 @@ button, html input[type=button], input[type=reset], input[type=submit] {
     min-height: 60px;
 }
 
+.border-catalogue {
+    border: 1px solid #088995;
+}
+
 
 /*Form Wizard*/
 .bs-wizard-wrap {
