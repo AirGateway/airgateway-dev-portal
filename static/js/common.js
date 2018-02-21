@@ -53,6 +53,8 @@ var urlMap = {
     meantimeStats: '/portal/stats/meantime/',
     aggregatorStats: '/portal/stats/aggregator/',
     agencyStats: '/portal/stats/agency/',
+    lookToBookRatioStats: '/portal/stats/look-to-book-ratio/',
+    lookToBookLimitReachedStats: '/portal/stats/look-to-book-limit/'
 };
 var tplInput = underscore.template($('#tpl_input').html());
 var tplMenu = underscore.template($('#tpl_menu').html());
@@ -553,7 +555,7 @@ var generateMeanResponseTimeChart = function (planID, canvasID) {
 
             var ctx = $("#" + canvasID).get(0).getContext("2d");
 
-            if (noData == true) {
+            if (noData === true) {
                 ctx.font = '20px Lato';
                 ctx.textAlign = 'center';
                 ctx.fillText('No Available Data', 400, 100);
@@ -565,6 +567,163 @@ var generateMeanResponseTimeChart = function (planID, canvasID) {
 }
 
 var colors = [47, 30, 10, 70, 80, 30, 50, 0, 5, 90];
+
+
+var generateLookToBookRatioChart = function(planID, canvasID) {
+    var url = urlMap.lookToBookRatioStats + planID;
+    $.signedAjax({
+        url: host + url,
+        success: function (response) {
+
+            var highlightColor = '#fff';
+
+            var baseColor = '217, 100%, '; //#00245D
+
+            var cData;
+
+            cData = {
+                labels: [],
+                datasets: []
+            };
+
+            var label = 'look to book ratio';
+            var idx = 0;
+            if (colors.length === idx) {
+                idx = 0
+            }
+            cData.datasets.push(getDataSet(label, baseColor, colors[idx], highlightColor));
+            idx++;
+
+
+            //var jsonData = JSON.parse(data);
+            var jsonData = response;
+
+            var sortMe = [];
+            var noData = true;
+
+            if (jsonData.data != null) {
+                for (var i in jsonData.data) {
+                    var thisDate = new Date(jsonData.data[i].id.time);
+                    var l = thisDate.getHours() + ':00';
+                    var hits = jsonData.data[i].hits;
+
+                    var obj = {
+                        d: thisDate,
+                        label: l
+                    };
+
+                    var look = jsonData.data[i].items['look'] || 0;
+                    var book = jsonData.data[i].items['book'] ? jsonData.data[i].items['book'] + 1 : 1;
+
+                    obj[label] = (look / book).toFixed(2);
+
+                    if (hits > 0) {
+                        noData = false;
+                    }
+                    sortMe.push(obj)
+                }
+            }
+
+            var fixedData = sortByKey(sortMe, 'd');
+
+            for (var j in fixedData) {
+                cData.labels.push(fixedData[j].label);
+                cData.datasets[0].data.push(fixedData[j][label]);
+            }
+
+            var ctx = $("#" + canvasID).get(0).getContext("2d");
+
+            if (noData === true) {
+                ctx.font = '20px Lato';
+                ctx.textAlign = 'center';
+                ctx.fillText('No Available Data', 400, 100);
+            } else {
+                var myNewChart = new Chart(ctx).Line(cData, chartOptions);
+            }
+        }
+    });
+};
+
+var generateLookToBookLimitReachedChart = function(planID, canvasID) {
+    var url = urlMap.lookToBookLimitReachedStats + planID;
+    $.signedAjax({
+        url: host + url,
+        success: function (response) {
+
+            var highlightColor = '#fff';
+
+            var baseColor = '217, 100%, '; //#00245D
+
+            var cData;
+
+            cData = {
+                labels: [],
+                datasets: []
+            };
+
+            var i = 0;
+            var elements = [];
+            for (var name in response.data[0].items) {
+                elements.push(name);
+                if (colors.length == i) {
+                    i = 0
+                }
+                cData.datasets.push(getDataSet(name, baseColor, colors[i], highlightColor));
+                i++;
+            }
+
+
+            //var jsonData = JSON.parse(data);
+            var jsonData = response;
+
+            var sortMe = [];
+            var noData = true;
+
+            if (jsonData.data != null) {
+                for (var i in jsonData.data) {
+                    var thisDate = new Date(jsonData.data[i].id.time);
+                    var l = thisDate.getHours() + ':00';
+                    var hits = jsonData.data[i].hits;
+
+                    var obj = {
+                        d: thisDate,
+                        label: l
+                    };
+
+                    for (var j in elements) {
+                        obj[elements[j]] = jsonData.data[i].items[elements[j]] || 0;
+                    }
+
+                    if (hits > 0) {
+                        noData = false;
+                    }
+                    sortMe.push(obj)
+                }
+            }
+
+            var fixedData = sortByKey(sortMe, 'd');
+
+            for (var idx in fixedData) {
+                cData.labels.push(fixedData[idx].label);
+                for (var k in elements) {
+                    cData.datasets[k].data.push(fixedData[idx][elements[k]]);
+                }
+            }
+
+            var ctx = $("#" + canvasID).get(0).getContext("2d");
+
+            if (noData == true) {
+                ctx.font = '20px Lato';
+                ctx.textAlign = 'center';
+                ctx.fillText('No Available Data', 400, 100);
+            } else {
+                var myNewChart = new Chart(ctx).Line(cData, chartOptions);
+            }
+        }
+    });
+};
+
+
 
 /*var generateChartForParticipants = function (keyId, canvasID, isAggregator) {
     var now = new Date();
