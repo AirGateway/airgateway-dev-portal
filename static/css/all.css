@@ -140,6 +140,10 @@ label.error {
     margin-top: 50px;
 }
 
+#forgot-password-panel, #reset-password-panel {
+   margin-top: 50px;
+}
+
 #register-panel {
     margin-top: 50px;
 }

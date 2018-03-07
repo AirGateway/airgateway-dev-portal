@@ -2,7 +2,7 @@
 <div class="container">
   <div class="row">
     <div class="col-md-8 center">
-      <div class="panel panel-default" id="login-panel">
+      <div class="panel panel-default" id="forgot-password-panel">
         <div class="panel-heading">
           <h3 class="panel-title">{{.Title}}</h3>
         </div>
@@ -14,6 +14,13 @@
               </div>
             </div>
           </div>
+          <div class="forgot-password collapse">
+            <div class="panel panel-success">
+              <div class="panel-body">
+                {{.Params.forgot_password_message}}
+              </div>
+            </div>
+          </div>
 
           <form action="" method="POST">
             <div class="form-group">
@@ -21,16 +28,10 @@
               <input type="email" class="form-control" id="username" name="username"
                      placeholder="{{.Params.emailplaceholder}}">
             </div>
-            <div class="form-group">
-              <label for="password">{{.Params.password}}</label>
-              <input type="password" class="form-control" id="password" name="password"
-                     placeholder="Password" autocomplete="off">
-            </div>
 
             <div class="form-group">
               <input type="submit" class="btn btn-success" value="{{.Params.submit}}">
             </div>
-            <a href="/forgot-password/">{{ .Params.forgotPassword }}</a>
           </form>
         </div>
       </div>
