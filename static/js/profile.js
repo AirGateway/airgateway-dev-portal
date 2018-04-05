@@ -40,7 +40,7 @@ if ($profileForm.length) {
                 $submitBtn = $profileForm.find('input[type=submit]');
 
                 $('input[name=username]').val(response.data.email);
-                $('input[name=public_key]').val(response.data.public_key);
+                $('textarea[name=public_key]').val(response.data.public_key);
 
                 for (var i in response.data.fields) {
                     var name = lodash.snakeCase(i);
